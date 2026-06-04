@@ -38,3 +38,33 @@ This document tracks persistent enhancements and project-specific rules for the 
 - **Animations**: Always use `motion/react`.
 - **Styling**: Strictly Tailwind CSS.
 - **Data**: Prefer real-time patterns with `onSnapshot` if Firebase is used.
+
+## Cursor Cloud specific instructions
+
+### Architecture
+Single Node process: **Express** serves REST APIs and (in dev) **Vite** middleware for the React SPA. **SQLite** (`rentroll_v3.db`, via `better-sqlite3`) is created/seeded automatically when `server.ts` starts. No Docker, emulators, or separate DB service.
+
+### Commands (see `package.json`)
+| Task | Command |
+|------|---------|
+| Install | `npm install` |
+| Dev (API + UI) | `npm run dev` → http://localhost:3000 |
+| Lint | `npm run lint` (`tsc --noEmit` only; no ESLint) |
+| Build | `npm run build` |
+| Production | `npm run build && npm run start` |
+
+There is **no test script** in this repo.
+
+### Running the dev server
+Use a **tmux** session (long-lived): `npm run dev` from `/workspace`. Do **not** use `npm run preview` for full-stack work — preview is Vite-only and has no Express API.
+
+### Optional integrations
+- **`GEMINI_API_KEY`**: Required only for `/api/gemini/*` (CEO briefing, AI visualizer). Hub, admin SQLite flows, and rent roll work without it.
+- **Firebase** (Auth + Firestore): Used for tenant mailbox customization in `TenantPortal.tsx`; most flows use REST + SQLite.
+
+### Admin smoke-test login
+Footer **Admin Login** uses password `1111` (see `src/App.tsx`). View toggles in the footer switch Hub / Admin / Tenant.
+
+### Gotchas
+- `server.ts` reads `GEMINI_API_KEY` from the process environment; README mentions `.env.local` but the server does not load dotenv by default — export the var in the shell or rely on Vite client injection during dev.
+- Some admin legal UI calls (`/api/legal-library-*`) are not implemented in `server.ts` and return 404; other legal routes work.
