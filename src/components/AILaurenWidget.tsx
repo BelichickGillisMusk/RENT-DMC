@@ -9,18 +9,72 @@ export const AILaurenWidget = () => {
     { text: 'Hi! I\'m Lauren, the AI Assistant for Rent-Ruby. How can I help you today?', sender: 'ai' }
   ]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) return;
-    setMessages([...messages, { text: message, sender: 'user' }]);
+    
+    const userMessage = { text: message, sender: 'user' };
+    setMessages(prev => [...prev, userMessage]);
     setMessage('');
     
-    // Simulate typing delay
-    setTimeout(() => {
-      setMessages(prev => [...prev, { 
-        text: 'Thanks for reaching out! A team member will review your message shortly.', 
-        sender: 'ai' 
-      }]);
-    }, 1000);
+    // Add temporary loading message
+    const tempAiMsgRef = { text: '...', sender: 'ai', isTyping: true };
+    setMessages(prev => [...prev, tempAiMsgRef]);
+    
+    try {
+      // Prepare chat history for context
+      const chatHistory = messages.map(msg => ({
+        role: msg.sender === 'ai' ? 'model' : 'user',
+        parts: [{ text: msg.text }]
+      }));
+      // add latest message
+      chatHistory.push({ role: 'user', parts: [{ text: message }] });
+
+      const response = await fetch('/api/gemini/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'gemini-3-flash-preview',
+          contents: chatHistory,
+          config: {
+            systemInstruction: `You are Lauren, the AI Assistant, Building Doorman, Sales Assistant, and Assistant General Manager for Rent-Ruby (specifically 3875 Ruby Street, Oakland CA 94609). 
+            You must be helpful, professional, and slightly warm/calming. 
+            
+            Core responsibilities:
+            - Doorman: Acknowledge visitors, provide parking/transit info, handle delivery questions.
+            - Sales Assistant: Give details about available units, amenities, neighborhood info, pricing, and encourage applications or tours.
+            - Assistant GM: Help current tenants with portal navigation, maintenance requests guidelines, building rules, and rent-related questions.
+
+            Information:
+            - Property: 3875 Ruby Street, Oakland CA 94609.
+            - Email: brian@norcalcarbmobile.com.
+            - Style: You speak concisely, don't use overwhelming amounts of markdown, and occasionally reference the vibrant Oakland soul. Keep answers brief (1-3 paragraphs max) since this is a chat widget.`
+          }
+        }),
+      });
+
+      const data = await response.json();
+      
+      setMessages(prev => {
+        const newMessages = [...prev];
+        // replace the typing placeholder
+        newMessages[newMessages.length - 1] = {
+          text: data.text || data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm having trouble connecting right now, please reach out to brian@norcalcarbmobile.com.",
+          sender: 'ai'
+        };
+        return newMessages;
+      });
+      
+    } catch (error) {
+      console.error("Chat error:", error);
+      setMessages(prev => {
+        const newMessages = [...prev];
+        newMessages[newMessages.length - 1] = {
+          text: 'Sorry, I encountered an error. Please reach out to brian@norcalcarbmobile.com.',
+          sender: 'ai'
+        };
+        return newMessages;
+      });
+    }
   };
 
   return (

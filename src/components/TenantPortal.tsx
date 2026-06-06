@@ -33,7 +33,9 @@ import {
   Package,
   Zap,
   X,
-  RefreshCw
+  RefreshCw,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
 
 import { LeaseUpdateWalkthrough } from './LeaseUpdateWalkthrough';
@@ -91,17 +93,83 @@ interface LeaseUpdate {
 export const TenantPortal = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'security' | 'refer' | 'settings' | 'maintenance' | 'mailbox' | 'support' | 'info-nook'>('mailbox');
   const [privacyMode, setPrivacyMode] = useState(false);
-  const [settings, setSettings] = useState<UserSettings>({
-    preferred_notification_time: '09:00',
-    sms_enabled: true,
-    email_enabled: true
+  const [offlineQueue, setOfflineQueue] = useState<any[]>(() => {
+    try {
+      const q = localStorage.getItem('ruby_offline_queue');
+      return q ? JSON.parse(q) : [];
+    } catch {
+      return [];
+    }
   });
-  const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
-  const [constructionUpdates, setConstructionUpdates] = useState<ConstructionUpdate[]>([]);
-  const [notices, setNotices] = useState<TenantNotice[]>([]);
-  const [violations, setViolations] = useState<LeaseViolation[]>([]);
-  const [maintenanceRequests, setMaintenanceRequests] = useState<any[]>([]);
-  const [leaseUpdate, setLeaseUpdate] = useState<LeaseUpdate | null>(null);
+
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [simulateOffline, setSimulateOffline] = useState(false);
+  const activeOffline = isOffline || simulateOffline;
+
+  const [settings, setSettings] = useState<UserSettings>(() => {
+    try {
+      const cached = localStorage.getItem('ruby_settings');
+      return cached ? JSON.parse(cached) : {
+        preferred_notification_time: '09:00',
+        sms_enabled: true,
+        email_enabled: true
+      };
+    } catch {
+      return {
+        preferred_notification_time: '09:00',
+        sms_enabled: true,
+        email_enabled: true
+      };
+    }
+  });
+  const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>(() => {
+    try {
+      const cached = localStorage.getItem('ruby_securityEvents');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [constructionUpdates, setConstructionUpdates] = useState<ConstructionUpdate[]>(() => {
+    try {
+      const cached = localStorage.getItem('ruby_constructionUpdates');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [notices, setNotices] = useState<TenantNotice[]>(() => {
+    try {
+      const cached = localStorage.getItem('ruby_notices');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [violations, setViolations] = useState<LeaseViolation[]>(() => {
+    try {
+      const cached = localStorage.getItem('ruby_violations');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [maintenanceRequests, setMaintenanceRequests] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem('ruby_maintenanceRequests');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [leaseUpdate, setLeaseUpdate] = useState<LeaseUpdate | null>(() => {
+    try {
+      const cached = localStorage.getItem('ruby_leaseUpdate');
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [selectedNotice, setSelectedNotice] = useState<TenantNotice | null>(null);
   const [referralData, setReferralData] = useState({ name: '', email: '' });
@@ -117,8 +185,22 @@ export const TenantPortal = () => {
   const [concernMessage, setConcernMessage] = useState('');
   const [showConcernSuccess, setShowConcernSuccess] = useState(false);
 
-  const [rentStatus, setRentStatus] = useState<{ amount: number, last_payment: string, status: string } | null>(null);
-  const [myConcerns, setMyConcerns] = useState<any[]>([]);
+  const [rentStatus, setRentStatus] = useState<{ amount: number, last_payment: string, status: string } | null>(() => {
+    try {
+      const cached = localStorage.getItem('ruby_rentStatus');
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [myConcerns, setMyConcerns] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem('ruby_myConcerns');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [mailboxCustomizations, setMailboxCustomizations] = useState<Record<string, { color: string }>>({});
   const [selectedMailbox, setSelectedMailbox] = useState<string | null>(null);
   const [currentUserUnit, setCurrentUserUnit] = useState<string>('101'); // Mocked for demo
@@ -140,6 +222,7 @@ export const TenantPortal = () => {
 
   useEffect(() => {
     // Auth and Firebase Sync
+    let unsubCustom: () => void = () => {};
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         // Set unit based on email for trial focus
@@ -148,51 +231,173 @@ export const TenantPortal = () => {
         } else {
           setCurrentUserUnit('101');
         }
+      }
 
-        // Sync public customizations
-        const unsubCustom = onSnapshot(collection(db, 'mailboxCustomizations'), (snapshot) => {
+      // Sync public customizations
+      try {
+        unsubCustom();
+        unsubCustom = onSnapshot(collection(db, 'mailboxCustomizations'), (snapshot) => {
           const customs: Record<string, { color: string }> = {};
           snapshot.forEach(doc => {
             customs[doc.id] = doc.data() as { color: string };
           });
           setMailboxCustomizations(customs);
         });
-
-        return () => unsubCustom();
-      } else {
-        // Still sync public customizations even if not logged in
-        const unsubCustom = onSnapshot(collection(db, 'mailboxCustomizations'), (snapshot) => {
-          const customs: Record<string, { color: string }> = {};
-          snapshot.forEach(doc => {
-            customs[doc.id] = doc.data() as { color: string };
-          });
-          setMailboxCustomizations(customs);
-        });
-        return () => unsubCustom();
+      } catch (err) {
+        console.warn("Firestore snapshot offline fallback:", err);
       }
     });
 
-    // Existing API fetches
-    fetch('/api/user-settings/1').then(res => res.json()).then(setSettings);
-    fetch('/api/security-events/1').then(res => res.json()).then(setSecurityEvents);
-    fetch('/api/construction-updates/1').then(res => res.json()).then(setConstructionUpdates);
-    fetch('/api/tenant-notices/1').then(res => res.json()).then(setNotices);
-    fetch('/api/lease-violations/1').then(res => res.json()).then(setViolations);
-    fetch('/api/maintenance?unit_id=1').then(res => res.json()).then(setMaintenanceRequests);
-    fetch('/api/concerns?unit_id=1').then(res => res.json()).then(setMyConcerns);
-    fetch('/api/lease-updates/1').then(res => res.json()).then(data => setLeaseUpdate(data[0] || null));
+    // Highly Resilient Caching Fetcher
+    const fetchWithCache = async (url: string, cacheKey: string, setter: (data: any) => void) => {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        setter(data);
+        localStorage.setItem(cacheKey, JSON.stringify(data));
+      } catch (err) {
+        console.warn(`Resilient Catch: Failed to fetch ${url}. Loading fallback data from localStorage.`);
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          setter(JSON.parse(cached));
+        }
+      }
+    };
+
+    // Load and Cache everything securely
+    fetchWithCache('/api/user-settings/1', 'ruby_settings', setSettings);
+    fetchWithCache('/api/security-events/1', 'ruby_securityEvents', setSecurityEvents);
+    fetchWithCache('/api/construction-updates/1', 'ruby_constructionUpdates', setConstructionUpdates);
+    fetchWithCache('/api/tenant-notices/1', 'ruby_notices', setNotices);
+    fetchWithCache('/api/lease-violations/1', 'ruby_violations', setViolations);
+    fetchWithCache('/api/maintenance?unit_id=1', 'ruby_maintenanceRequests', setMaintenanceRequests);
+    fetchWithCache('/api/concerns?unit_id=1', 'ruby_myConcerns', setMyConcerns);
     
-    // Fetch rent status
-    fetch('/api/tenant-rent/1').then(res => res.json()).then(setRentStatus);
+    // Lease Updates Custom Array Handler
+    fetch('/api/lease-updates/1')
+      .then(res => {
+        if (!res.ok) throw new Error("Lease update fetch failed");
+        return res.json();
+      })
+      .then(data => {
+        const lease = data[0] || null;
+        setLeaseUpdate(lease);
+        localStorage.setItem('ruby_leaseUpdate', JSON.stringify(lease));
+      })
+      .catch(() => {
+        const cached = localStorage.getItem('ruby_leaseUpdate');
+        if (cached) setLeaseUpdate(JSON.parse(cached));
+      });
+    
+    // Rent status
+    fetchWithCache('/api/tenant-rent/1', 'ruby_rentStatus', setRentStatus);
+
+    // Online/Offline Listeners
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      unsubscribeAuth();
+      unsubCustom();
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
+  const syncOfflineQueue = async () => {
+    if (activeOffline || offlineQueue.length === 0) return;
+    setIsSubmitting(true);
+    const updatedQueue = [...offlineQueue];
+    const failedItems = [];
+
+    for (const item of updatedQueue) {
+      try {
+        let endpoint = '';
+        if (item.type === 'maintenance') endpoint = '/api/maintenance';
+        else if (item.type === 'referral') endpoint = '/api/referrals';
+        else if (item.type === 'concern') endpoint = '/api/concerns';
+        else if (item.type === 'settings') endpoint = '/api/user-settings/1';
+
+        const method = item.type === 'settings' ? 'PATCH' : 'POST';
+        const res = await fetch(endpoint, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item.payload)
+        });
+
+        if (!res.ok) throw new Error('Sync failed');
+      } catch (err) {
+        console.error('Failed to sync offline item:', item, err);
+        failedItems.push(item);
+      }
+    }
+
+    setOfflineQueue(failedItems);
+    localStorage.setItem('ruby_offline_queue', JSON.stringify(failedItems));
+    setIsSubmitting(false);
+
+    if (failedItems.length === 0) {
+      alert('Your offline submissions have been synchronized successfully!');
+      
+      const fetchWithCache = async (url: string, cacheKey: string, setter: (data: any) => void) => {
+        try {
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            setter(data);
+            localStorage.setItem(cacheKey, JSON.stringify(data));
+          }
+        } catch {}
+      };
+      fetchWithCache('/api/user-settings/1', 'ruby_settings', setSettings);
+      fetchWithCache('/api/maintenance?unit_id=1', 'ruby_maintenanceRequests', setMaintenanceRequests);
+      fetchWithCache('/api/concerns?unit_id=1', 'ruby_myConcerns', setMyConcerns);
+    }
+  };
+
+  useEffect(() => {
+    if (!activeOffline) {
+      syncOfflineQueue();
+    }
+  }, [activeOffline]);
+
   const fetchLeaseUpdate = () => {
-    fetch('/api/lease-updates/1').then(res => res.json()).then(data => setLeaseUpdate(data[0] || null));
+    fetch('/api/lease-updates/1')
+      .then(res => res.json())
+      .then(data => {
+        const lease = data[0] || null;
+        setLeaseUpdate(lease);
+        localStorage.setItem('ruby_leaseUpdate', JSON.stringify(lease));
+      })
+      .catch(() => {
+        const cached = localStorage.getItem('ruby_leaseUpdate');
+        if (cached) setLeaseUpdate(JSON.parse(cached));
+      });
   };
 
   const handleUpdateSettings = async (newSettings: Partial<UserSettings>) => {
     const updated = { ...settings, ...newSettings };
     setSettings(updated);
+    localStorage.setItem('ruby_settings', JSON.stringify(updated));
+
+    if (activeOffline) {
+      const newItem = {
+        id: Math.random().toString(36).substr(2, 9),
+        type: 'settings',
+        description: 'Updated notification settings offline',
+        payload: newSettings,
+        timestamp: new Date().toLocaleString()
+      };
+      const newQueue = [...offlineQueue, newItem];
+      setOfflineQueue(newQueue);
+      localStorage.setItem('ruby_offline_queue', JSON.stringify(newQueue));
+      return;
+    }
+
     await fetch('/api/user-settings/1', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -202,16 +407,34 @@ export const TenantPortal = () => {
 
   const handleReferFriend = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      tenant_id: 1,
+      friend_name: referralData.name,
+      friend_email: referralData.email
+    };
+
+    if (activeOffline) {
+      const newItem = {
+        id: Math.random().toString(36).substr(2, 9),
+        type: 'referral',
+        description: `Referral of ${referralData.name} (${referralData.email})`,
+        payload,
+        timestamp: new Date().toLocaleString()
+      };
+      const newQueue = [...offlineQueue, newItem];
+      setOfflineQueue(newQueue);
+      localStorage.setItem('ruby_offline_queue', JSON.stringify(newQueue));
+      alert('Offline Mode Active: Referral saved locally inside the Outbox!');
+      setReferralData({ name: '', email: '' });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await fetch('/api/referrals', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tenant_id: 1, // Mock
-          friend_name: referralData.name,
-          friend_email: referralData.email
-        })
+        body: JSON.stringify(payload)
       });
       alert('Referral sent! Thank you for sharing the Ruby Soul.');
       setReferralData({ name: '', email: '' });
@@ -223,7 +446,6 @@ export const TenantPortal = () => {
   const handleSendReport = async () => {
     if (!reportText.trim()) return;
     setIsSubmitting(true);
-    // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
       setReportText('');
@@ -234,17 +456,28 @@ export const TenantPortal = () => {
 
   const handleViewNotice = async (notice: TenantNotice) => {
     setSelectedNotice(notice);
+    if (activeOffline) return;
     if (notice.status === 'Sent') {
       await fetch(`/api/tenant-notices/${notice.id}/view`, { method: 'PATCH' });
-      fetch('/api/tenant-notices/1').then(res => res.json()).then(setNotices);
+      fetch('/api/tenant-notices/1').then(res => res.json()).then(data => {
+        setNotices(data);
+        localStorage.setItem('ruby_notices', JSON.stringify(data));
+      });
     }
   };
 
   const handleAcknowledgeNotice = async (noticeId: number) => {
+    if (activeOffline) {
+      alert("Notice acknowledgments require an active connection to solidify legal agreements on the stadium servers.");
+      return;
+    }
     setIsSubmitting(true);
     try {
       await fetch(`/api/tenant-notices/${noticeId}/acknowledge`, { method: 'PATCH' });
-      fetch('/api/tenant-notices/1').then(res => res.json()).then(setNotices);
+      fetch('/api/tenant-notices/1').then(res => res.json()).then(data => {
+        setNotices(data);
+        localStorage.setItem('ruby_notices', JSON.stringify(data));
+      });
       setSelectedNotice(null);
     } finally {
       setIsSubmitting(false);
@@ -271,7 +504,7 @@ export const TenantPortal = () => {
   };
 
   const handleUpdateMailboxColor = async (unit: string, color: string) => {
-    if (unit !== currentUserUnit) return; // Secure: only tenant can update their own
+    if (unit !== currentUserUnit) return;
 
     if (!auth.currentUser) {
       alert("Please sign in to save your customizations.");
@@ -279,10 +512,7 @@ export const TenantPortal = () => {
     }
 
     try {
-      // Update public customization
       await setDoc(doc(db, 'mailboxCustomizations', unit), { unit, color });
-      
-      // Update private settings
       await setDoc(doc(db, 'userSettings', auth.currentUser.uid), {
         uid: auth.currentUser.uid,
         unit,
@@ -295,20 +525,53 @@ export const TenantPortal = () => {
 
   const handleCreateMaintenance = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      unit_id: 1,
+      description: reportText,
+      photo_url: ''
+    };
+
+    if (activeOffline) {
+      const newItem = {
+        id: Math.random().toString(36).substr(2, 9),
+        type: 'maintenance',
+        description: `Maintenance Request: ${reportText.substring(0, 30)}...`,
+        payload,
+        timestamp: new Date().toLocaleString()
+      };
+      const newQueue = [...offlineQueue, newItem];
+      setOfflineQueue(newQueue);
+      localStorage.setItem('ruby_offline_queue', JSON.stringify(newQueue));
+      setReportText('');
+      setShowReportSuccess(true);
+      
+      const currentRequests = [...maintenanceRequests];
+      currentRequests.unshift({
+        id: 'temp-' + newItem.id,
+        description: reportText,
+        status: 'Offline Pending Sync',
+        created_at: new Date().toISOString()
+      });
+      setMaintenanceRequests(currentRequests);
+      localStorage.setItem('ruby_maintenanceRequests', JSON.stringify(currentRequests));
+
+      setTimeout(() => setShowReportSuccess(false), 3000);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await fetch('/api/maintenance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          unit_id: 1, // Mock
-          description: reportText,
-          photo_url: ''
-        })
+        body: JSON.stringify(payload)
       });
       setReportText('');
       setShowReportSuccess(true);
-      fetch('/api/maintenance?unit_id=1').then(res => res.json()).then(setMaintenanceRequests);
+      fetch('/api/maintenance?unit_id=1').then(res => res.json()).then(data => {
+        setMaintenanceRequests(data);
+        localStorage.setItem('ruby_maintenanceRequests', JSON.stringify(data));
+      });
       setTimeout(() => setShowReportSuccess(false), 3000);
     } finally {
       setIsSubmitting(false);
@@ -317,22 +580,57 @@ export const TenantPortal = () => {
 
   const handleValueAddSubmit = async () => {
     if (!valueAddRequest.description) return;
+    const payload = {
+      unit_id: 1,
+      description: `[VALUE-ADD: ${valueAddRequest.type}] ${valueAddRequest.description}`,
+      is_value_add: 1,
+      photo_url: ''
+    };
+
+    if (activeOffline) {
+      const newItem = {
+        id: Math.random().toString(36).substr(2, 9),
+        type: 'maintenance',
+        description: `Value-Add [${valueAddRequest.type}]: ${valueAddRequest.description.substring(0, 30)}...`,
+        payload,
+        timestamp: new Date().toLocaleString()
+      };
+      const newQueue = [...offlineQueue, newItem];
+      setOfflineQueue(newQueue);
+      localStorage.setItem('ruby_offline_queue', JSON.stringify(newQueue));
+      setValueAddRequest({ description: '', type: 'Painting' });
+      setShowValueAddForm(false);
+      setShowReportSuccess(true);
+
+      const currentRequests = [...maintenanceRequests];
+      currentRequests.unshift({
+        id: 'temp-' + newItem.id,
+        description: payload.description,
+        is_value_add: 1,
+        status: 'Offline Pending Sync',
+        created_at: new Date().toISOString()
+      });
+      setMaintenanceRequests(currentRequests);
+      localStorage.setItem('ruby_maintenanceRequests', JSON.stringify(currentRequests));
+
+      setTimeout(() => setShowReportSuccess(false), 3000);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await fetch('/api/maintenance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          unit_id: 1, // Mocked
-          description: `[VALUE-ADD: ${valueAddRequest.type}] ${valueAddRequest.description}`,
-          is_value_add: 1,
-          photo_url: ''
-        })
+        body: JSON.stringify(payload)
       });
       setValueAddRequest({ description: '', type: 'Painting' });
       setShowValueAddForm(false);
       setShowReportSuccess(true);
-      fetch('/api/maintenance?unit_id=1').then(res => res.json()).then(setMaintenanceRequests);
+      fetch('/api/maintenance?unit_id=1').then(res => res.json()).then(data => {
+        setMaintenanceRequests(data);
+        localStorage.setItem('ruby_maintenanceRequests', JSON.stringify(data));
+      });
       setTimeout(() => setShowReportSuccess(false), 3000);
     } finally {
       setIsSubmitting(false);
@@ -341,18 +639,52 @@ export const TenantPortal = () => {
 
   const handleSubmitConcern = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      unit_id: 1,
+      type: concernType,
+      message: concernMessage
+    };
+
+    if (activeOffline) {
+      const newItem = {
+        id: Math.random().toString(36).substr(2, 9),
+        type: 'concern',
+        description: `Concern: ${concernMessage.substring(0, 30)}...`,
+        payload,
+        timestamp: new Date().toLocaleString()
+      };
+      const newQueue = [...offlineQueue, newItem];
+      setOfflineQueue(newQueue);
+      localStorage.setItem('ruby_offline_queue', JSON.stringify(newQueue));
+      
+      const currentConcerns = [...myConcerns];
+      currentConcerns.unshift({
+        id: 'temp-' + newItem.id,
+        type: concernType,
+        message: concernMessage,
+        status: 'Offline Pending Sync',
+        created_at: new Date().toISOString()
+      });
+      setMyConcerns(currentConcerns);
+      localStorage.setItem('ruby_myConcerns', JSON.stringify(currentConcerns));
+
+      setShowConcernSuccess(true);
+      setConcernMessage('');
+      setTimeout(() => setShowConcernSuccess(false), 3000);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await fetch('/api/concerns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          unit_id: 1, // Mock
-          type: concernType,
-          message: concernMessage
-        })
+        body: JSON.stringify(payload)
       });
-      fetch('/api/concerns?unit_id=1').then(res => res.json()).then(setMyConcerns);
+      fetch('/api/concerns?unit_id=1').then(res => res.json()).then(data => {
+        setMyConcerns(data);
+        localStorage.setItem('ruby_myConcerns', JSON.stringify(data));
+      });
       setShowConcernSuccess(true);
       setConcernMessage('');
       setTimeout(() => setShowConcernSuccess(false), 3000);
@@ -387,6 +719,90 @@ export const TenantPortal = () => {
               {activeTab === tab.id && <motion.div layoutId="activeTenantTab" className="absolute bottom-0 left-0 right-0 h-1 bg-app-accent" />}
             </button>
           ))}
+        </div>
+      )}
+
+      {/* Offline Status & Local Cache Banner */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 bg-white/5 backdrop-blur-md border border-app-border rounded-3xl">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <span className={`block h-3 w-3 rounded-full ${activeOffline ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+            {activeOffline && (
+              <span className="absolute inline-flex h-3 w-3 rounded-full bg-amber-400 opacity-75 animate-ping -top-0 -left-0" />
+            )}
+          </div>
+          <div>
+            <div className="text-xs font-black uppercase tracking-widest text-[#FF5F1F] flex items-center gap-1.5">
+              {activeOffline ? (
+                <>
+                  <WifiOff className="w-3.5 h-3.5 text-amber-500" />
+                  Offline Mode Active
+                </>
+              ) : (
+                <>
+                  <Wifi className="w-3.5 h-3.5 text-emerald-500" />
+                  Rent-Ruby Cache Synchronized
+                </>
+              )}
+            </div>
+            <p className="text-[10px] text-app-text/50 uppercase tracking-widest font-semibold mt-0.5">
+              {activeOffline 
+                ? 'Displaying contract details & notifications safely from localStorage cache.' 
+                : 'All lease documents, notices, and smart-bin rules are held securely on-device.'
+              }
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          {offlineQueue.length > 0 && (
+            <div className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[9px] font-black uppercase tracking-widest rounded-full animate-pulse">
+              {offlineQueue.length} Pending Actions
+            </div>
+          )}
+          
+          <button
+            onClick={() => setSimulateOffline(!simulateOffline)}
+            className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all cursor-pointer ${
+              simulateOffline 
+                ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20' 
+                : 'bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20'
+            }`}
+          >
+            {simulateOffline ? 'Disable Simulation' : 'Simulate Offline'}
+          </button>
+        </div>
+      </div>
+
+      {activeOffline && offlineQueue.length > 0 && (
+        <div className="p-6 bg-amber-500/5 border border-amber-500/15 rounded-[2rem] space-y-4">
+          <div className="flex items-center justify-between">
+            <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-600 flex items-center gap-2">
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Outbox (Waiting to go online)
+            </h5>
+            <button 
+              onClick={() => {
+                setOfflineQueue([]);
+                localStorage.removeItem('ruby_offline_queue');
+              }}
+              className="text-[9px] font-black text-ruby uppercase tracking-widest hover:underline"
+            >
+              Clear Queue
+            </button>
+          </div>
+          <div className="divide-y divide-amber-500/10">
+            {offlineQueue.map((item, i) => (
+              <div key={item.id} className="py-3 flex justify-between items-center text-xs">
+                <div>
+                  <span className="font-bold text-app-text font-mono uppercase tracking-widest border border-app-border px-1.5 py-0.5 rounded mr-2 bg-white/20">
+                    {item.type}
+                  </span>
+                  <span className="text-app-text/70">{item.description}</span>
+                </div>
+                <span className="text-[8px] font-mono text-app-text/40">{item.timestamp}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

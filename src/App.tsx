@@ -32,7 +32,9 @@ import {
   Activity,
   FileText,
   Mail,
-  Wrench
+  Wrench,
+  Phone,
+  ArrowDownCircle
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -72,6 +74,12 @@ import { TravelNursePortal } from './components/TravelNursePortal';
 import { SecurityCameras } from './components/SecurityCameras';
 import { MosswoodMailboxes } from './components/MosswoodMailboxes';
 import { AILaurenWidget } from './components/AILaurenWidget';
+import { GmailContactForm } from './components/GmailContactForm';
+import { ShareModal } from './components/ShareModal';
+import { EmailTemplates } from './components/EmailTemplates';
+import { EmployersSection } from './components/EmployersSection';
+import { AdminOccupancyMonitor } from './components/AdminOccupancyMonitor';
+import { VisibilityMatrix } from './components/VisibilityMatrix';
 
 const revenueData = [
   { month: 'Jan', revenue: 45000, occupancy: 92 },
@@ -91,10 +99,12 @@ const distributionData = [
 export default function App() {
   const { theme } = useTheme();
   const [view, setView] = useState<'hub' | 'admin' | 'tenant' | 'travel'>('hub');
-  const [adminTab, setAdminTab] = useState<'portfolio' | 'rent-roll' | 'maintenance' | 'marketing' | 'community' | 'ceo' | 'sfplus' | 'marketmax' | 'vendors' | 'concerns' | 'flow' | 'travel' | 'cameras' | 'legal'>('portfolio');
+  const [adminTab, setAdminTab] = useState<'portfolio' | 'rent-roll' | 'maintenance' | 'marketing' | 'community' | 'ceo' | 'sfplus' | 'marketmax' | 'vendors' | 'concerns' | 'flow' | 'travel' | 'cameras' | 'legal' | 'email-templates'>('portfolio');
   const [rentRollUnlocked, setRentRollUnlocked] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showOwnerVision, setShowOwnerVision] = useState(false);
+  const [showEmailContact, setShowEmailContact] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   return (
     <div className={`min-h-screen font-sans selection:bg-app-accent/30 transition-colors duration-700`}>
@@ -112,9 +122,30 @@ export default function App() {
           />
         )}
       </AnimatePresence>
+      <AnimatePresence>
+        {showEmailContact && (
+          <GmailContactForm onClose={() => setShowEmailContact(false)} />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showShareModal && (
+          <ShareModal onClose={() => setShowShareModal(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Floating global preview safety banner */}
+      <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <div className="bg-[#FF5F1F]/95 backdrop-blur-md text-white px-5 py-2 rounded-full border border-white/20 text-[9px] font-black uppercase tracking-[0.2em] shadow-[0_8px_30px_rgba(255,95,31,0.5)] flex items-center gap-2 pointer-events-auto select-none">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+          </span>
+          Site Preview Only — Not Live
+        </div>
+      </div>
       {/* Navigation */}
       <nav className={`fixed top-0 w-full z-50 border-b border-app-border bg-app-bg/80 backdrop-blur-xl transition-all duration-500`}>
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between bg-[#000000] text-[#79248f]">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 font-black tracking-tighter text-2xl">
               <span className="text-white">RENT-</span>
@@ -148,6 +179,13 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowShareModal(true)}
+              className="p-2 text-white/80 hover:text-app-accent transition-colors cursor-pointer flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/10"
+              title="Share Rent-Ruby"
+            >
+              <Share2 className="w-4 h-4 text-app-accent" />
+            </button>
             <ThemeToggle />
             {view === 'admin' && (
               <button 
@@ -232,7 +270,53 @@ export default function App() {
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-zinc-950/20"></div>
               </div>
               
-              <div className="relative z-10 max-w-7xl mx-auto px-6 pt-10 text-center space-y-8">
+              <div className="relative z-10 max-w-7xl mx-auto px-6 pt-10 text-center space-y-8 bg-[#000000]">
+                <motion.div 
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="flex flex-wrap items-center justify-center gap-2 md:gap-4 bg-white/5 backdrop-blur-xl border border-white/10 p-2 md:p-3 rounded-full max-w-3xl mx-auto shadow-2xl"
+                >
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 border-r border-white/10 pr-4 pl-2 hidden sm:inline">
+                    Immediate Inquiry
+                  </span>
+                  
+                  <a 
+                    href="#neighborhood" 
+                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-white/80 hover:text-app-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5"
+                  >
+                    <ArrowDownCircle className="w-3.5 h-3.5 text-app-accent" /> Find Out More
+                  </a>
+                  
+                  <a 
+                    href="tel:4159008563" 
+                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-white/80 hover:text-app-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-app-accent" /> Call
+                  </a>
+                  
+                  <a 
+                    href="sms:4159008563?body=Hi%20Rent-Ruby%2C%20I'm%20interested%20in%20learning%20more%20about%20the%20units%21" 
+                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-white/80 hover:text-app-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 text-app-accent" /> Text
+                  </a>
+
+                  <button 
+                    onClick={() => setShowShareModal(true)}
+                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-white/80 hover:text-app-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5 cursor-pointer"
+                  >
+                    <Share2 className="w-3.5 h-3.5 text-app-accent" /> Share
+                  </button>
+                  
+                  <button 
+                    onClick={() => setShowEmailContact(true)}
+                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider bg-app-accent hover:bg-app-accent/90 text-white transition-all py-1.5 px-4 rounded-full shadow-[0_0_15px_rgba(255,95,31,0.5)] border border-white/10 cursor-pointer"
+                  >
+                    <Mail className="w-3.5 h-3.5" /> Email Intake
+                  </button>
+                </motion.div>
+
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -241,15 +325,37 @@ export default function App() {
                   <Sparkles className="w-4 h-4" /> Positve Vibes Live Here Story.
                 </motion.div>
                 
-                <div className="space-y-2">
+                <div className="space-y-6">
                   <motion.h1 
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-7xl md:text-[9rem] font-sans font-black text-white tracking-tighter leading-[0.85] uppercase"
+                    className="text-5xl md:text-[7rem] font-sans font-black text-white tracking-tight leading-[0.9] uppercase flex flex-col items-center"
                   >
-                    <span className="italic text-app-accent">Oakland</span>.
+                    <span className="italic text-app-accent mb-4 tracking-tighter">Walk, Bike, Hike.</span>
+                    <span className="text-4xl md:text-[5rem] text-white/90">Mosswood, Oakland</span>
                   </motion.h1>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="text-xl md:text-2xl font-bold text-[#ffffff] max-w-3xl mx-auto"
+                  >
+                    Your safe, vibrant anchor connecting you to the best of East Bay's outdoors and city life.
+                  </motion.p>
                 </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="flex flex-wrap justify-center gap-3 md:gap-4 pt-4 pb-2"
+                >
+                  {['GM On Site', 'Maint On Site', 'Free Street Parking', 'Bike Room Inside', 'Storage'].map((amenity, i) => (
+                    <span key={i} className="px-5 py-2.5 bg-app-accent text-white font-black uppercase text-xs md:text-sm tracking-widest rounded-full shadow-[0_0_20px_rgba(255,95,31,0.6)] border border-white/20">
+                      {amenity}
+                    </span>
+                  ))}
+                </motion.div>
 
                 <motion.p 
                   initial={{ opacity: 0, y: 20 }}
@@ -315,7 +421,7 @@ export default function App() {
                 {[
                   { title: 'Free Street Parking', desc: 'Permits are completely free for residents through an exclusive hospital agreement.', icon: Zap },
                   { title: 'On-Site Laundry', desc: 'Modern, high-capacity machines just steps from your door.', icon: Zap },
-                  { title: 'Amazon Hub', desc: 'Never miss a delivery with our secure, on-site package lockers.', icon: Package },
+                  { title: 'Amazon Locker (On-Site)', desc: 'Secure, dedicated package lockers located directly on property for fast, safe deliveries.', icon: Package },
                   { title: 'Secure Bike Room', desc: 'Indoor storage with key-card access to keep your bike safe.', icon: Bike },
                   { title: '24/7 Monitoring', desc: 'AI-powered recognition cameras throughout the perimeter.', icon: Camera },
                   { title: 'On-Site Maintenance', desc: 'Experienced specialists ready to handle repairs promptly.', icon: Wrench },
@@ -330,6 +436,9 @@ export default function App() {
                 ))}
               </div>
             </section>
+
+            {/* Employers Section */}
+            <EmployersSection />
 
             <section id="maintenance-flow" className="py-24 bg-white">
               <div className="max-w-7xl mx-auto px-6">
@@ -471,16 +580,16 @@ export default function App() {
                 <div className="space-y-6">
                   <div className="text-xs font-black uppercase tracking-widest text-app-text/50">Navigation</div>
                   <ul className="space-y-4 text-sm font-bold">
-                    <li><a href="#" className="text-app-text/70 hover:text-app-accent transition-colors">Call 415-900-8563</a></li>
-                    <li><a href="mailto:staff@rent-ruby.com" className="text-app-text/70 hover:text-app-accent transition-colors">Email staff@rent-ruby.com</a></li>
+                    <li><a href="tel:4159008563" className="text-app-text/70 hover:text-app-accent transition-colors">Call 415-900-8563</a></li>
+                    <li><button onClick={() => setShowEmailContact(true)} className="text-app-text/70 hover:text-app-accent transition-colors">Email brian@norcalcarbmobile.com</button></li>
                     <li><a href="#" className="text-app-text/70 hover:text-app-accent transition-colors">Maintenance Request</a></li>
                   </ul>
                 </div>
                 <div className="space-y-6">
                   <div className="text-xs font-black uppercase tracking-widest text-app-text/50">Contact</div>
                   <ul className="space-y-4 text-sm font-bold">
-                    <li className="text-app-text/70">hello@3875ruby.com</li>
-                    <li className="text-app-text/70">(510) 555-0123</li>
+                    <li className="text-app-text/70">brian@norcalcarbmobile.com</li>
+                    <li className="text-app-text/70">415-900-8563</li>
                     <li className="text-app-text/70">Oakland, CA 94609</li>
                   </ul>
                 </div>
@@ -669,6 +778,12 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Dynamic Occupancy and Visibility Controls */}
+              <div className="grid grid-cols-1 gap-8 mb-12">
+                <AdminOccupancyMonitor />
+                <VisibilityMatrix />
+              </div>
+
               {/* Portal Navigation Tabs */}
               <div className="flex gap-8 border-b border-app-text/5 mb-12 overflow-x-auto pb-px">
                 <button 
@@ -761,6 +876,13 @@ export default function App() {
                   Security Cameras
                   {adminTab === 'cameras' && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-app-accent" />}
                 </button>
+                <button 
+                  onClick={() => setAdminTab('email-templates')}
+                  className={`pb-4 text-sm font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${adminTab === 'email-templates' ? 'text-app-accent' : 'text-app-text/40 hover:text-app-text'}`}
+                >
+                  Email Templates
+                  {adminTab === 'email-templates' && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-app-accent" />}
+                </button>
               </div>
 
               {/* Dynamic Admin Content */}
@@ -811,6 +933,10 @@ export default function App() {
               ) : adminTab === 'cameras' ? (
                 <section id="cameras" className="py-12">
                   <SecurityCameras />
+                </section>
+              ) : adminTab === 'email-templates' ? (
+                <section id="email-templates" className="py-12">
+                  <EmailTemplates />
                 </section>
               ) : (
                 <section id="vendors" className="py-12">
