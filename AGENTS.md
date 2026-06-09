@@ -66,5 +66,5 @@ Use a **tmux** session (long-lived): `npm run dev` from `/workspace`. Do **not**
 Footer **Admin Login** uses password `1111` (see `src/App.tsx`). View toggles in the footer switch Hub / Admin / Tenant.
 
 ### Gotchas
-- `server.ts` reads `GEMINI_API_KEY` from the process environment; README mentions `.env.local` but the server does not load dotenv by default — export the var in the shell or rely on Vite client injection during dev.
+- server.ts reads GEMINI_API_KEY from the process environment; README mentions .env.local but the server does not load dotenv by default — export the var in the shell before running the server.
 - Some admin legal UI calls (`/api/legal-library-*`) are not implemented in `server.ts` and return 404; other legal routes work.
