@@ -57,7 +57,7 @@ Screenshots saved under `/opt/cursor/artifacts/consolidation/` when captured fro
 
 | # | App | URL (dev) | Palette | Typography | Best for |
 |---|-----|-----------|---------|------------|----------|
-| 1 | **Rent-Ruby Hub** | `:3000` Hub | Orange `#FF5F1F`, navy `#0B1A2D`, white | Inter + serif italics | **Public marketing** — story, amenities, neighborhood |
+| 1 | **Rent-Ruby Hub** | `:3000` Hub | Orange `#FD5A1E`, navy `#0B1A2D`, white | Inter + serif italics | **Public marketing** — story, amenities, neighborhood |
 | 2 | **Rent-Ruby Tenant** | `:3000` Tenant | Warm brown + orange accents | Same family | **Resident portal** — floor plan, Info Nook, mailbox |
 | 3 | **Silverback home** | `:3001` SILVERBACK | Black + silver gradient + **cyan** `#00F0FF` | Bebas Neue + DM Sans/Mono | Agency brand; not property-first |
 | 4 | **Silverback Rent DMC** | `:3001` RENTDMC | Black + cyan; green/red ledger | Mono dashboard | **Admin ledger** feel — fast scan paid/late |
