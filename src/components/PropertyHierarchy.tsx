@@ -9,8 +9,10 @@ import {
   LayoutGrid, 
   List,
   Search,
-  Plus
+  Plus,
+  Map
 } from 'lucide-react';
+import { FloorPlanView } from './FloorPlanView';
 
 interface Property {
   id: number;
@@ -23,7 +25,8 @@ interface Property {
 export const PropertyHierarchy = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'floorplan'>('grid');
+  const [selectedPropertyId, setSelectedPropertyId] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -72,15 +75,24 @@ export const PropertyHierarchy = () => {
           <div className="flex p-1 bg-app-text/5 rounded-full border border-app-border">
             <button 
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-full transition-all ${viewMode === 'grid' ? 'bg-app-card shadow-sm text-app-accent' : 'text-app-text/40 hover:text-app-text'}`}
+              className={`p-2 rounded-full transition-all cursor-pointer ${viewMode === 'grid' ? 'bg-app-card shadow-sm text-app-accent' : 'text-app-text/40 hover:text-app-text'}`}
+              title="Grid View"
             >
               <LayoutGrid className="w-4 h-4" />
             </button>
             <button 
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-full transition-all ${viewMode === 'list' ? 'bg-app-card shadow-sm text-app-accent' : 'text-app-text/40 hover:text-app-text'}`}
+              className={`p-2 rounded-full transition-all cursor-pointer ${viewMode === 'list' ? 'bg-app-card shadow-sm text-app-accent' : 'text-app-text/40 hover:text-app-text'}`}
+              title="List View"
             >
               <List className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => setViewMode('floorplan')}
+              className={`p-2 rounded-full transition-all cursor-pointer ${viewMode === 'floorplan' ? 'bg-app-card shadow-sm text-app-accent' : 'text-app-text/40 hover:text-app-text'}`}
+              title="Interactive Floor Plan"
+            >
+              <Map className="w-4 h-4" />
             </button>
           </div>
 
@@ -99,6 +111,10 @@ export const PropertyHierarchy = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               className="group cursor-pointer"
+              onClick={() => {
+                setSelectedPropertyId(property.id);
+                setViewMode('floorplan');
+              }}
             >
               <div className="aspect-[16/10] rounded-[2.5rem] overflow-hidden mb-6 relative">
                 <img 
@@ -109,7 +125,7 @@ export const PropertyHierarchy = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-app-text/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
                   <div className="flex items-center gap-2 text-white font-bold text-sm">
-                    View Dashboard <ChevronRight className="w-4 h-4" />
+                    View Blueprint & Details <ChevronRight className="w-4 h-4" />
                   </div>
                 </div>
                 <div className="absolute top-6 right-6 px-4 py-2 bg-app-card/90 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest text-app-text shadow-lg">
@@ -127,22 +143,28 @@ export const PropertyHierarchy = () => {
                 <div className="grid grid-cols-3 gap-4 pt-4">
                   <div className="p-4 rounded-2xl bg-app-card border border-app-border group-hover:border-app-accent/20 transition-colors">
                     <div className="text-[10px] font-bold text-app-text/30 uppercase tracking-widest mb-1">Units</div>
-                    <div className="text-lg font-serif font-bold text-app-text">24</div>
+                    <div className="text-lg font-serif font-bold text-app-text">
+                      {property.id === 1 ? '24' : property.id === 2 ? '16' : '12'}
+                    </div>
                   </div>
                   <div className="p-4 rounded-2xl bg-app-card border border-app-border group-hover:border-app-accent/20 transition-colors">
                     <div className="text-[10px] font-bold text-app-text/30 uppercase tracking-widest mb-1">Occupancy</div>
-                    <div className="text-lg font-serif font-bold text-emerald-600">98%</div>
+                    <div className="text-lg font-serif font-bold text-emerald-500">
+                      {property.id === 1 ? '91%' : '100%'}
+                    </div>
                   </div>
                   <div className="p-4 rounded-2xl bg-app-card border border-app-border group-hover:border-app-accent/20 transition-colors">
                     <div className="text-[10px] font-bold text-app-text/30 uppercase tracking-widest mb-1">Revenue</div>
-                    <div className="text-lg font-serif font-bold text-app-text">$42k</div>
+                    <div className="text-lg font-serif font-bold text-app-text">
+                      {property.id === 1 ? '$52k' : property.id === 2 ? '$32k' : '$25k'}
+                    </div>
                   </div>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
-      ) : (
+      ) : viewMode === 'list' ? (
         <div className="bg-app-card rounded-[2.5rem] border border-app-border overflow-hidden shadow-sm">
           <table className="w-full text-left">
             <thead>
@@ -157,7 +179,14 @@ export const PropertyHierarchy = () => {
             </thead>
             <tbody>
               {filteredProperties.map((property) => (
-                <tr key={property.id} className="border-b border-app-border hover:bg-app-text/[0.02] transition-colors group cursor-pointer">
+                <tr 
+                  key={property.id} 
+                  className="border-b border-app-border hover:bg-app-text/[0.02] transition-colors group cursor-pointer"
+                  onClick={() => {
+                    setSelectedPropertyId(property.id);
+                    setViewMode('floorplan');
+                  }}
+                >
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-xl overflow-hidden bg-app-text/5">
@@ -174,16 +203,22 @@ export const PropertyHierarchy = () => {
                       {property.neighborhood}
                     </span>
                   </td>
-                  <td className="px-8 py-6 font-serif font-bold text-app-text">24</td>
+                  <td className="px-8 py-6 font-serif font-bold text-app-text">
+                    {property.id === 1 ? '24' : property.id === 2 ? '16' : '12'}
+                  </td>
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-2">
                       <div className="w-16 h-1.5 bg-app-text/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500 w-[98%]"></div>
+                        <div className="h-full bg-emerald-500" style={{ width: property.id === 1 ? '91%' : '100%' }}></div>
                       </div>
-                      <span className="text-xs font-bold text-emerald-600">98%</span>
+                      <span className="text-xs font-bold text-emerald-500">
+                        {property.id === 1 ? '91%' : '100%'}
+                      </span>
                     </div>
                   </td>
-                  <td className="px-8 py-6 font-serif font-bold text-app-text">$42,850</td>
+                  <td className="px-8 py-6 font-serif font-bold text-app-text">
+                    {property.id === 1 ? '$52,850' : property.id === 2 ? '$32,100' : '$25,400'}
+                  </td>
                   <td className="px-8 py-6 text-right">
                     <button className="p-2 text-app-text/20 group-hover:text-app-accent transition-colors">
                       <ChevronRight className="w-5 h-5" />
@@ -194,7 +229,32 @@ export const PropertyHierarchy = () => {
             </tbody>
           </table>
         </div>
-      )}
+      ) : (
+        <div className="space-y-6">
+          {/* Property selector dropdown inside the floorplan mode */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-app-card p-5 rounded-[2rem] border border-app-border shadow-sm animate-fadeIn">
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono font-black uppercase tracking-wider text-app-text/40">Selected Property:</span>
+              <select
+                value={selectedPropertyId}
+                onChange={(e) => setSelectedPropertyId(Number(e.target.value))}
+                className="px-4 py-2 bg-app-bg border border-app-border rounded-xl text-xs text-app-text font-sans font-bold focus:outline-none focus:ring-1 focus:ring-app-accent cursor-pointer"
+              >
+                {properties.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p className="text-xs text-app-text/40 italic">
+            Showing active physical units & structure for {properties.find(p => p.id === selectedPropertyId)?.name || 'Property'}
+          </p>
+        </div>
+        
+        <FloorPlanView propertyId={selectedPropertyId} />
+      </div>
+    )}
     </div>
   );
 };

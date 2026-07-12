@@ -16,7 +16,17 @@ import {
   FileText,
   ShieldAlert,
   Gavel,
-  RefreshCw
+  RefreshCw,
+  Mail,
+  Wrench,
+  History,
+  Calendar,
+  Send,
+  Shield,
+  Check,
+  AlertTriangle,
+  ArrowUpRight,
+  TrendingUp
 } from 'lucide-react';
 import { ConfirmationModal } from './ConfirmationModal';
 
@@ -128,6 +138,88 @@ export const RentRollDashboard: React.FC = () => {
   const [property, setProperty] = useState<Property | null>(null);
   const [isEditingUnit, setIsEditingUnit] = useState(false);
   const [editUnitData, setEditUnitData] = useState({ status: '', photos: '' });
+
+  // Interactive modal sub-tab state
+  const [activeModalTab, setActiveModalTab] = useState<'overview' | 'history' | 'actions'>('overview');
+
+  // Quick action custom forms state
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailBody, setEmailBody] = useState('');
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+  const [emailTemplate, setEmailTemplate] = useState('general');
+  const [quickMaintDesc, setQuickMaintDesc] = useState('');
+  const [quickMaintSeverity, setQuickMaintSeverity] = useState('Normal');
+  const [maintSubmittingState, setMaintSubmittingState] = useState<'idle' | 'submitting' | 'submitted'>('idle');
+
+  // Prepopulate email based on selected template and unit details
+  useEffect(() => {
+    if (!selectedUnit) return;
+    const days = selectedUnit.lease_end ? getDaysRemaining(selectedUnit.lease_end) : 'N/A';
+    const newRent = Math.round(selectedUnit.rent_amount * 1.05);
+    
+    if (emailTemplate === 'general') {
+      setEmailSubject(`Update regarding Unit #${selectedUnit.unit_number}`);
+      setEmailBody(`Dear ${selectedUnit.tenant_name || 'Resident'},\n\nWe hope you are having an excellent week at Rent-Ruby. Please let us know if you have any administrative questions or feedback.\n\nBest regards,\nLauren (AI Assistant)\nRent-Ruby Hub`);
+    } else if (emailTemplate === 'late') {
+      setEmailSubject(`⚠️ Outstanding Balance Reminder - Unit #${selectedUnit.unit_number}`);
+      setEmailBody(`Dear ${selectedUnit.tenant_name || 'Resident'},\n\nThis is a friendly reminder that an outstanding balance of $${selectedUnit.balance_due} is currently recorded for Unit #${selectedUnit.unit_number}.\n\nPlease clear this balance or check secure direct deposit routing with Chase at your earliest convenience to preserve good standing.\n\nBest regards,\nLauren (AI Assistant)\nRent-Ruby Management`);
+    } else if (emailTemplate === 'renewal') {
+      setEmailSubject(`🏡 Lease Renewal Proposal - Unit #${selectedUnit.unit_number}`);
+      setEmailBody(`Dear ${selectedUnit.tenant_name || 'Resident'},\n\nYour current lease is scheduled to expire on ${selectedUnit.lease_end || 'N/A'} (approx. ${days} days remaining).\n\nWe would love to extend your residency at 3875 Ruby Street. We are pleased to propose a standard 12-month renewal at a locked-in rate of $${newRent}/month (a standard 5% adjustment aligned with Oakland medical corridor averages).\n\nPlease reply or confirm in the communication bubble if you wish to lock in this offer!\n\nBest regards,\nLauren (AI Assistant)\nRent-Ruby Hub`);
+    } else if (emailTemplate === 'audit') {
+      setEmailSubject(`📋 Dynamic Security & Maintenance Review - Unit #${selectedUnit.unit_number}`);
+      setEmailBody(`Dear ${selectedUnit.tenant_name || 'Resident'},\n\nWe will be running a routine, non-intrusive safety review of fire sensors and access entry tags for all suites in the Mosswood district next week.\n\nThere is no preparation or entry required on your end unless we contact you individually. Thank you for helping us maintain peak Giants-standard secure housing.\n\nBest regards,\nLauren (AI Assistant)\nRent-Ruby Operations`);
+    }
+  }, [emailTemplate, selectedUnit]);
+
+  const handleQuickEmailDispatch = async () => {
+    if (!selectedUnit) return;
+    setEmailStatus('sending');
+    try {
+      await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          unit_id: selectedUnit.id,
+          sender: 'Manager',
+          content: `[EMAIL DISPATCH] Subject: ${emailSubject}\n\n${emailBody}`
+        })
+      });
+      fetchUnitDetails(selectedUnit.id, selectedUnit.tenant_id);
+      setEmailStatus('sent');
+      setTimeout(() => {
+        setEmailStatus('idle');
+      }, 3000);
+    } catch (e) {
+      console.error(e);
+      setEmailStatus('idle');
+    }
+  };
+
+  const handleQuickMaintSubmit = async () => {
+    if (!selectedUnit || !quickMaintDesc.trim()) return;
+    setMaintSubmittingState('submitting');
+    try {
+      await fetch('/api/maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          unit_id: selectedUnit.id,
+          description: `[${quickMaintSeverity.toUpperCase()}] ${quickMaintDesc}`,
+          photo_url: null
+        })
+      });
+      fetchUnitDetails(selectedUnit.id, selectedUnit.tenant_id);
+      setQuickMaintDesc('');
+      setMaintSubmittingState('submitted');
+      setTimeout(() => {
+        setMaintSubmittingState('idle');
+      }, 3000);
+    } catch (e) {
+      console.error(e);
+      setMaintSubmittingState('idle');
+    }
+  };
 
   // Confirmation state
   const [confirmState, setConfirmState] = useState<{
@@ -906,182 +998,459 @@ Are you absolutely sure you want to proceed?`,
                 style={{ width: `${leftPanelWidth}%` }}
                 className="border-r border-app-border p-8 overflow-y-auto space-y-8 bg-app-bg/30"
               >
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-5 rounded-2xl bg-app-text/5 border border-app-border space-y-1">
-                    <div className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest font-mono">Monthly Rent</div>
-                    <div className="text-xl font-bold text-app-text">${formatCurrency(selectedUnit.rent_amount)}</div>
-                  </div>
-                  <div className="p-5 rounded-2xl bg-app-text/5 border border-app-border space-y-1">
-                    <div className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest font-mono">Balance Due</div>
-                    <div className="text-xl font-bold text-app-accent">${formatCurrency(selectedUnit.balance_due)}</div>
-                  </div>
-                  <div className="p-5 rounded-2xl bg-app-text/5 border border-app-border space-y-1">
-                    <div className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest font-mono">Lease End</div>
-                    <div className="text-xl font-bold text-app-text">{selectedUnit.lease_end || 'N/A'}</div>
-                  </div>
-                  <div className="p-5 rounded-2xl bg-app-text/5 border border-app-border space-y-1">
-                    <div className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest font-mono">Last Payment</div>
-                    <div className="text-xl font-bold text-app-accent">{selectedUnit.last_payment_date || 'None'}</div>
-                  </div>
+                {/* Interactive sub-tab selector */}
+                <div className="flex bg-app-text/5 border border-app-border p-1.5 rounded-2xl gap-1">
+                  {[
+                    { id: 'overview', label: 'Overview', icon: Building2 },
+                    { id: 'history', label: 'Tenant History & Lease', icon: History },
+                    { id: 'actions', label: 'Action Hub', icon: Shield }
+                  ].map((tab) => {
+                    const Icon = tab.icon;
+                    const isActive = activeModalTab === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setActiveModalTab(tab.id as any)}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                          isActive 
+                            ? 'bg-app-accent text-white shadow-lg shadow-app-accent/20' 
+                            : 'text-app-text/40 hover:text-app-text hover:bg-app-text/5'
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                        <span>{tab.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
 
-                {/* GM/Owner Controls: Vacancy & Photos */}
-                {(isOwnerOrAccounting || isGM) && (
-                  <div className="p-6 rounded-3xl bg-app-text/5 border border-app-border space-y-6">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-black text-app-text uppercase tracking-widest">Unit Management</h4>
-                      <button 
-                        onClick={() => {
-                          if (isEditingUnit) {
-                            handleUpdateUnit();
-                          } else {
-                            setEditUnitData({ status: selectedUnit.status, photos: selectedUnit.photos || '' });
-                            setIsEditingUnit(true);
-                          }
-                        }}
-                        className="px-4 py-2 bg-app-accent text-white text-[10px] font-black uppercase tracking-widest rounded-lg"
-                      >
-                        {isEditingUnit ? 'Save Changes' : 'Edit Unit'}
-                      </button>
+                {/* Sub-tab 1: Overview */}
+                {activeModalTab === 'overview' && (
+                  <div className="space-y-8">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-5 rounded-2xl bg-app-text/5 border border-app-border space-y-1">
+                        <div className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest font-mono">Monthly Rent</div>
+                        <div className="text-xl font-bold text-app-text">${formatCurrency(selectedUnit.rent_amount)}</div>
+                      </div>
+                      <div className="p-5 rounded-2xl bg-app-text/5 border border-app-border space-y-1">
+                        <div className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest font-mono">Balance Due</div>
+                        <div className="text-xl font-bold text-app-accent">${formatCurrency(selectedUnit.balance_due)}</div>
+                      </div>
+                      <div className="p-5 rounded-2xl bg-app-text/5 border border-app-border space-y-1">
+                        <div className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest font-mono">Lease End</div>
+                        <div className="text-xl font-bold text-app-text">{selectedUnit.lease_end || 'N/A'}</div>
+                      </div>
+                      <div className="p-5 rounded-2xl bg-app-text/5 border border-app-border space-y-1">
+                        <div className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest font-mono">Last Payment</div>
+                        <div className="text-xl font-bold text-app-accent">{selectedUnit.last_payment_date || 'None'}</div>
+                      </div>
                     </div>
 
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest block mb-2">Occupancy Status</label>
-                        <select
-                          disabled={!isEditingUnit}
-                          value={isEditingUnit ? editUnitData.status : selectedUnit.status}
-                          onChange={(e) => setEditUnitData({ ...editUnitData, status: e.target.value })}
-                          className="w-full bg-app-bg border border-app-border rounded-xl px-4 py-3 text-sm text-app-text disabled:opacity-50"
-                        >
-                          <option value="Occupied">Occupied</option>
-                          <option value="Vacant">Vacant</option>
-                          <option value="Maintenance">Maintenance</option>
-                        </select>
+                    {/* GM/Owner Controls: Vacancy & Photos */}
+                    {(isOwnerOrAccounting || isGM) && (
+                      <div className="p-6 rounded-3xl bg-app-text/5 border border-app-border space-y-6">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-sm font-black text-app-text uppercase tracking-widest">Unit Management</h4>
+                          <button 
+                            onClick={() => {
+                              if (isEditingUnit) {
+                                handleUpdateUnit();
+                              } else {
+                                setEditUnitData({ status: selectedUnit.status, photos: selectedUnit.photos || '' });
+                                setIsEditingUnit(true);
+                              }
+                            }}
+                            className="px-4 py-2 bg-app-accent text-white text-[10px] font-black uppercase tracking-widest rounded-lg"
+                          >
+                            {isEditingUnit ? 'Save Changes' : 'Edit Unit'}
+                          </button>
+                        </div>
+
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest block mb-1.5">Occupancy Status</label>
+                            <select
+                              disabled={!isEditingUnit}
+                              value={isEditingUnit ? editUnitData.status : selectedUnit.status}
+                              onChange={(e) => setEditUnitData({ ...editUnitData, status: e.target.value })}
+                              className="w-full bg-app-bg border border-app-border rounded-xl px-4 py-3 text-sm text-app-text disabled:opacity-50"
+                            >
+                              <option value="Occupied">Occupied</option>
+                              <option value="Vacant">Vacant</option>
+                              <option value="Maintenance">Maintenance</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest block mb-1.5">Unit Photos (URLs)</label>
+                            <textarea
+                              disabled={!isEditingUnit}
+                              value={isEditingUnit ? editUnitData.photos : selectedUnit.photos || ''}
+                              onChange={(e) => setEditUnitData({ ...editUnitData, photos: e.target.value })}
+                              placeholder="Enter comma-separated image URLs..."
+                              className="w-full bg-app-bg border border-app-border rounded-xl p-4 text-sm text-app-text disabled:opacity-50 min-h-[80px]"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <label className="text-[10px] font-bold text-app-text/40 uppercase tracking-widest block mb-2">Unit Photos (URLs)</label>
-                        <textarea
-                          disabled={!isEditingUnit}
-                          value={isEditingUnit ? editUnitData.photos : selectedUnit.photos || ''}
-                          onChange={(e) => setEditUnitData({ ...editUnitData, photos: e.target.value })}
-                          placeholder="Enter comma-separated image URLs..."
-                          className="w-full bg-app-bg border border-app-border rounded-xl p-4 text-sm text-app-text disabled:opacity-50 min-h-[80px]"
-                        />
+                    )}
+
+                    {/* Login History */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-black text-app-text/40 uppercase tracking-[0.2em] font-mono flex items-center gap-2">
+                        <Clock className="w-4 h-4" /> Tenant Activity Log
+                      </h4>
+                      <div className="p-6 rounded-2xl bg-app-text/5 border border-app-border space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="text-sm text-app-text/60">Last Login</div>
+                          <div className="text-sm font-bold text-app-text">{selectedUnit.last_login_at ? new Date(selectedUnit.last_login_at).toLocaleString() : 'Never'}</div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="text-sm text-app-text/60">Login Location</div>
+                          <div className="text-sm font-mono text-app-text/40">{selectedUnit.last_login_ip || 'N/A'}</div>
+                        </div>
+                        <div className="pt-2 text-[10px] text-app-text/30 uppercase tracking-widest italic">
+                          * Activity logging compliant with local privacy regulations
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Login History */}
-                <div className="space-y-4">
-                  <h4 className="text-xs font-black text-app-text/40 uppercase tracking-[0.2em] font-mono flex items-center gap-2">
-                    <Clock className="w-4 h-4" /> Tenant Activity Log
-                  </h4>
-                  <div className="p-6 rounded-2xl bg-app-text/5 border border-app-border space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm text-app-text/60">Last Login</div>
-                      <div className="text-sm font-bold text-app-text">{selectedUnit.last_login_at ? new Date(selectedUnit.last_login_at).toLocaleString() : 'Never'}</div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm text-app-text/60">Login Location</div>
-                      <div className="text-sm font-mono text-app-text/40">{selectedUnit.last_login_ip || 'N/A'}</div>
-                    </div>
-                    <div className="pt-2 text-[10px] text-app-text/30 uppercase tracking-widest italic">
-                      * Activity logging compliant with local privacy regulations
-                    </div>
-                  </div>
-                </div>
+                {/* Sub-tab 2: Tenant History & Lease */}
+                {activeModalTab === 'history' && (
+                  <div className="space-y-8 animate-fadeIn">
+                    {/* Lease Expiration indicator widget */}
+                    <div className="p-6 rounded-2xl border border-app-border bg-app-text/[0.02] space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-xs font-black text-app-text/40 uppercase tracking-widest flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-app-accent" /> Lease Lifespan & Expiration
+                        </h4>
+                        {selectedUnit.lease_end ? (
+                          <span className={`text-[9px] font-mono font-black uppercase tracking-widest px-2.5 py-1 rounded ${
+                            getDaysRemaining(selectedUnit.lease_end) <= 90 
+                              ? 'bg-red-500/10 text-red-500 border border-red-500/20' 
+                              : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/10'
+                          }`}>
+                            {getDaysRemaining(selectedUnit.lease_end) <= 90 ? 'Expiring Soon' : 'Active Term'}
+                          </span>
+                        ) : (
+                          <span className="text-[9px] font-mono font-black uppercase tracking-widest px-2.5 py-1 rounded bg-app-text/10 text-app-text/50">Month-to-month</span>
+                        )}
+                      </div>
 
-                {/* Maintenance Requests */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-black text-app-text/40 uppercase tracking-[0.2em] font-mono flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4" /> Maintenance Issues
-                    </h4>
-                    <button className="text-[10px] font-black text-app-accent uppercase tracking-widest hover:underline">New Request</button>
-                  </div>
-                  <div className="space-y-3">
-                    {maintenance.length > 0 ? (
-                      maintenance.map(req => (
-                        <div key={req.id} className="p-4 rounded-xl bg-app-text/5 border border-app-border flex items-center justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-baseline justify-between">
+                          <span className="text-xs text-app-text/60">Upcoming Lease Expiration Date</span>
+                          <span className="text-base font-black text-app-text tracking-tighter">{selectedUnit.lease_end || 'N/A'}</span>
+                        </div>
+
+                        {selectedUnit.lease_end && (
+                          <>
+                            <div className="relative w-full h-3 bg-app-text/5 border border-app-border rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full rounded-full transition-all duration-500 ${
+                                  getDaysRemaining(selectedUnit.lease_end) <= 90 ? 'bg-app-accent' : 'bg-emerald-500'
+                                }`}
+                                style={{ width: `${Math.min(100, Math.max(10, ((365 - getDaysRemaining(selectedUnit.lease_end)) / 365) * 100))}%` }}
+                              />
+                            </div>
+                            <div className="flex justify-between items-center text-[10px] uppercase font-mono tracking-wider">
+                              <span className="text-app-text/30">Contract Origin (Estimated)</span>
+                              <span className="font-extrabold text-app-text/80">{getDaysRemaining(selectedUnit.lease_end)} Days Remaining</span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      {selectedUnit.lease_end && getDaysRemaining(selectedUnit.lease_end) <= 90 && (
+                        <div className="p-4 rounded-xl bg-app-accent/10 border border-app-accent/20 flex items-start gap-3 mt-4">
+                          <AlertTriangle className="w-5 h-5 text-app-accent shrink-0 mt-0.5" />
                           <div className="space-y-1">
-                            <div className="text-sm font-bold text-app-text">{req.description}</div>
-                            <div className="text-[10px] text-app-text/40 uppercase tracking-widest">{new Date(req.created_at).toLocaleDateString()} • {req.status}</div>
+                            <p className="text-xs font-bold text-app-text">Urgent Lease Action Advised</p>
+                            <p className="text-[11px] text-app-text/60 leading-relaxed">
+                              This lease terminates in under 90 days. It is advised to dispatch a renewal notice proposal to lock high premium Giants yields.
+                            </p>
+                            <button 
+                              onClick={() => {
+                                setActiveModalTab('actions');
+                                setEmailTemplate('renewal');
+                              }}
+                              className="text-[10px] font-black text-app-accent uppercase tracking-widest flex items-center gap-1 hover:underline pt-1"
+                            >
+                              Draft Renewal Notice <ArrowUpRight className="w-3 h-3" />
+                            </button>
                           </div>
-                          {req.photo_url && (
-                            <div className="w-10 h-10 rounded-lg bg-app-bg border border-app-border overflow-hidden">
-                              <img src={req.photo_url} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                            </div>
-                          )}
                         </div>
-                      ))
-                    ) : (
-                      <div className="p-8 rounded-2xl border border-dashed border-app-border flex flex-col items-center justify-center text-center space-y-3">
-                        <div className="w-12 h-12 rounded-full bg-app-text/5 flex items-center justify-center text-app-text/30">
-                          <CheckCircle2 className="w-6 h-6" />
-                        </div>
-                        <div className="text-sm text-app-text/40">No active maintenance issues reported.</div>
-                      </div>
-                    )}
-                    
-                    {/* Photo Upload Placeholder */}
-                    <input 
-                      type="file" 
-                      ref={fileInputRef} 
-                      className="hidden" 
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                    />
-                    <div 
-                      onClick={() => fileInputRef.current?.click()}
-                      className={`p-6 rounded-2xl border-2 border-dashed border-app-border bg-app-text/[0.01] flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-app-text/[0.03] transition-colors ${isUploading ? 'opacity-50 cursor-wait' : ''}`}
-                    >
-                      {isUploading ? (
-                        <div className="w-6 h-6 border-2 border-app-text/30 border-t-app-text rounded-full animate-spin" />
-                      ) : (
-                        <Plus className="w-6 h-6 text-app-text/30" />
                       )}
-                      <div className="text-[10px] font-black text-app-text/40 uppercase tracking-widest">
-                        {isUploading ? 'Uploading...' : 'Upload Photo / Document'}
+                    </div>
+
+                    {/* Timeline of Tenant History */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-black text-app-text/40 uppercase tracking-[0.2em] font-mono flex items-center gap-2">
+                        <History className="w-4 h-4" /> Comprehensive Tenant History
+                      </h4>
+
+                      <div className="relative border-l border-app-border pl-6 space-y-6 ml-3">
+                        {/* Milestone: Access tags issued */}
+                        <div className="relative">
+                          <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-app-card border-2 border-emerald-500 flex items-center justify-center">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          </div>
+                          <div>
+                            <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest font-mono">System Automated</span>
+                            <h5 className="text-sm font-bold text-app-text mt-0.5">Gated Access Authorization</h5>
+                            <p className="text-xs text-app-text/40 mt-1">Dual-encrypted access tags configured and synchronized with system cameras.</p>
+                          </div>
+                        </div>
+
+                        {/* Milestone: Check deposits */}
+                        <div className="relative">
+                          <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-app-card border-2 border-emerald-500 flex items-center justify-center">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          </div>
+                          <div>
+                            <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest font-mono">Financial Clearance</span>
+                            <h5 className="text-sm font-bold text-app-text mt-0.5">Security Deposit Vaulted</h5>
+                            <p className="text-xs text-app-text/40 mt-1">Primary secure security deposit cleared successfully in escrow holding.</p>
+                          </div>
+                        </div>
+
+                        {/* Last payment entry */}
+                        {selectedUnit.last_payment_date && (
+                          <div className="relative">
+                            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-app-card border-2 border-emerald-500 flex items-center justify-center">
+                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest font-mono">Rent Clearing Log</span>
+                              <h5 className="text-sm font-bold text-app-text mt-0.5">Payment Completed (${formatCurrency(selectedUnit.rent_amount)})</h5>
+                              <p className="text-xs text-app-text/40 mt-1">
+                                Monthly contract quota cleared successfully on {selectedUnit.last_payment_date} ({selectedUnit.last_payment_status || 'Auto-Debit'}).
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Historic Maintenance Work Orders */}
+                        {maintenance.length > 0 && (
+                          <div className="relative">
+                            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-app-card border-2 border-app-accent flex items-center justify-center">
+                              <div className="w-1.5 h-1.5 rounded-full bg-app-accent" />
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-bold text-app-accent uppercase tracking-widest font-mono">Service History</span>
+                              <h5 className="text-sm font-bold text-app-text mt-0.5">Reported Maintenance Ticket</h5>
+                              <div className="space-y-2 mt-2">
+                                {maintenance.map(req => (
+                                  <div key={req.id} className="p-3 rounded-lg bg-app-text/5 border border-app-border flex items-center justify-between text-xs">
+                                    <div className="space-y-0.5">
+                                      <p className="font-bold text-app-text">{req.description}</p>
+                                      <p className="text-[9px] uppercase tracking-wider text-app-text/40">Status: {req.status}</p>
+                                    </div>
+                                    <span className="text-[9px] font-mono opacity-30">{new Date(req.created_at).toLocaleDateString()}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Historic Compliance Notices */}
+                        {notices.length > 0 && (
+                          <div className="relative">
+                            <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-app-card border-2 border-ruby flex items-center justify-center">
+                              <div className="w-1.5 h-1.5 rounded-full bg-ruby" />
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-bold text-ruby uppercase tracking-widest font-mono">Legal Compliance</span>
+                              <h5 className="text-sm font-bold text-app-text mt-0.5">Official Notices Logged</h5>
+                              <div className="space-y-2 mt-2">
+                                {notices.map(notice => (
+                                  <div key={notice.id} className="p-3 rounded-lg bg-ruby/5 border border-ruby/10 flex items-center justify-between text-xs">
+                                    <div className="space-y-0.5">
+                                      <p className="font-bold text-app-text">{notice.title}</p>
+                                      <p className="text-[9px] uppercase tracking-wider text-ruby">Acknowledged: {notice.status}</p>
+                                    </div>
+                                    <span className="text-[9px] font-mono opacity-30">{new Date(notice.sent_at).toLocaleDateString()}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
 
-                {/* Communication Log */}
-                <div className="space-y-4">
-                  <h4 className="text-xs font-black text-app-text/40 uppercase tracking-[0.2em] font-mono flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4" /> Communication History
-                  </h4>
-                  <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-app-text/10 scrollbar-track-transparent">
-                    {messages.length > 0 ? (
-                      [...messages].reverse().map(msg => (
-                        <div key={msg.id} className="p-4 rounded-xl bg-app-text/5 border border-app-border space-y-2 hover:bg-app-text/[0.07] transition-colors">
-                          <div className="flex justify-between items-start">
-                            <div className="flex items-center gap-2">
-                              <div className={`w-1.5 h-1.5 rounded-full ${msg.sender === 'Manager' ? 'bg-app-accent' : 'bg-ruby-light'}`} />
-                              <span className={`text-[10px] font-black uppercase tracking-widest ${msg.sender === 'Manager' ? 'text-app-accent' : 'text-ruby-light'}`}>
-                                {msg.sender}
-                              </span>
-                            </div>
-                            <span className="text-[10px] text-app-text/30 font-mono">
-                              {new Date(msg.created_at).toLocaleString()}
-                            </span>
-                          </div>
-                          <p className="text-sm text-app-text/60 leading-relaxed">{msg.content}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="p-8 rounded-2xl border border-dashed border-app-border flex flex-col items-center justify-center text-center space-y-3">
-                        <div className="w-12 h-12 rounded-full bg-app-text/5 flex items-center justify-center text-app-text/30">
-                          <MessageSquare className="w-6 h-6" />
-                        </div>
-                        <div className="text-sm text-app-text/40">No communication history recorded.</div>
+                {/* Sub-tab 3: Action Hub */}
+                {activeModalTab === 'actions' && (
+                  <div className="space-y-8 animate-fadeIn">
+                    {/* Send Digital Email Composer */}
+                    <div className="p-6 rounded-2xl border border-app-border bg-app-text/[0.02] space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-xs font-black text-app-text/40 uppercase tracking-widest flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-app-accent" /> Dispatch Secure Resident Email
+                        </h4>
+                        <span className="text-[9px] font-mono font-bold uppercase tracking-widest opacity-40">Lauren (AI Agent) proxy</span>
                       </div>
-                    )}
+
+                      {emailStatus === 'sent' ? (
+                        <div className="p-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-2">
+                          <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto" />
+                          <p className="text-sm font-bold text-app-text">Notice Dispatched Successfully!</p>
+                          <p className="text-xs text-app-text/50">
+                            Sent to Tenant Email and copied/forwarded to <span className="text-app-text/80 font-bold">bryan@norcalcarbmobile.com</span>.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-4 text-xs">
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[9px] font-black uppercase tracking-widest text-app-text/40 mb-1">Select Template</label>
+                              <select 
+                                value={emailTemplate}
+                                onChange={(e) => setEmailTemplate(e.target.value)}
+                                className="w-full bg-app-bg border border-app-border rounded-lg px-3 py-2 text-xs text-app-text font-bold"
+                              >
+                                <option value="general">General Administration Update</option>
+                                <option value="late">Outstanding Balance Reminder</option>
+                                <option value="renewal">Standard 12-Month Lease Renewal Offer</option>
+                                <option value="audit">Dynamic Property Safety Review</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-[9px] font-black uppercase tracking-widest text-app-text/40 mb-1">Recipient Account</label>
+                              <input 
+                                type="text" 
+                                readOnly
+                                value={`${selectedUnit.tenant_name || 'Resident'} (${selectedUnit.tenant_name?.split(' ')[0].toLowerCase() || 'resident'}@rent-ruby.com)`}
+                                className="w-full bg-app-bg/50 border border-app-border/40 text-app-text/40 rounded-lg px-3 py-2 text-xs font-mono font-bold cursor-not-allowed"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[9px] font-black uppercase tracking-widest text-app-text/40 mb-1">Email Subject Line</label>
+                            <input 
+                              type="text" 
+                              value={emailSubject}
+                              onChange={(e) => setEmailSubject(e.target.value)}
+                              className="w-full bg-app-bg border border-app-border rounded-lg px-3 py-2 text-xs text-app-text font-bold focus:outline-none focus:ring-1 focus:ring-app-accent/50"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[9px] font-black uppercase tracking-widest text-app-text/40 mb-1">Dispatch Message Content</label>
+                            <textarea 
+                              value={emailBody}
+                              onChange={(e) => setEmailBody(e.target.value)}
+                              rows={5}
+                              className="w-full bg-app-bg border border-app-border rounded-lg p-3 text-xs text-app-text focus:outline-none focus:ring-1 focus:ring-app-accent/50 leading-relaxed font-sans"
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between gap-4 pt-1">
+                            <span className="text-[9px] text-app-text/30 font-mono">* Copies dynamically CC'ed to bryan@norcalcarbmobile.com</span>
+                            <button 
+                              onClick={handleQuickEmailDispatch}
+                              disabled={emailStatus === 'sending'}
+                              className="flex items-center gap-1.5 px-5 py-2.5 bg-app-accent text-white font-black uppercase tracking-widest rounded-lg hover:opacity-90 transition-all disabled:opacity-40"
+                            >
+                              {emailStatus === 'sending' ? (
+                                <>
+                                  <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                  <span>Sending...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Send className="w-3.5 h-3.5" />
+                                  <span>Dispatch Email Notice</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Quick Maintenance Dispatcher (Work Orders) */}
+                    <div className="p-6 rounded-2xl border border-app-border bg-app-text/[0.02] space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-xs font-black text-app-text/40 uppercase tracking-widest flex items-center gap-2">
+                          <Wrench className="w-4 h-4 text-app-accent" /> Log Urgent Maintenance Work Order
+                        </h4>
+                        <span className="text-[9px] font-mono font-bold uppercase tracking-widest opacity-40">Direct-to-Technician queue</span>
+                      </div>
+
+                      {maintSubmittingState === 'submitted' ? (
+                        <div className="p-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-2">
+                          <Check className="w-10 h-10 text-emerald-500 mx-auto" />
+                          <p className="text-sm font-bold text-app-text">Work Order Dispatched!</p>
+                          <p className="text-xs text-app-text/50">Ticket registered under Suite #{selectedUnit.unit_number} and appended to historical logs.</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-4 text-xs">
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[9px] font-black uppercase tracking-widest text-app-text/40 mb-1">Severity / Urgency</label>
+                              <select 
+                                value={quickMaintSeverity}
+                                onChange={(e) => setQuickMaintSeverity(e.target.value)}
+                                className="w-full bg-app-bg border border-app-border rounded-lg px-3 py-2 text-xs text-app-text font-bold"
+                              >
+                                <option value="Low Priority">Low Priority (Non-emergency amenity fixing)</option>
+                                <option value="Normal">Normal Priority (Plumbing, entry locks, metrics)</option>
+                                <option value="Emergency">CRITICAL (Plumbing overflowing, HVAC outage)</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-[9px] font-black uppercase tracking-widest text-app-text/40 mb-1">Target Residence</label>
+                              <input 
+                                type="text" 
+                                readOnly
+                                value={`Suite #${selectedUnit.unit_number} (${selectedUnit.neighborhood || 'Mosswood'})`}
+                                className="w-full bg-app-bg/50 border border-app-border/40 text-app-text/40 rounded-lg px-3 py-2 text-xs font-bold cursor-not-allowed"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[9px] font-black uppercase tracking-widest text-app-text/40 mb-1">Issue Concern Description</label>
+                            <input 
+                              type="text" 
+                              value={quickMaintDesc}
+                              onChange={(e) => setQuickMaintDesc(e.target.value)}
+                              placeholder="e.g., Clogged kitchen sink, elevator keypad unresponsive, HVAC leak..."
+                              className="w-full bg-app-bg border border-app-border rounded-lg px-3 py-2 text-xs text-app-text font-bold focus:outline-none focus:ring-1 focus:ring-app-accent/50"
+                            />
+                          </div>
+
+                          <div className="flex justify-end pt-1">
+                            <button 
+                              onClick={handleQuickMaintSubmit}
+                              disabled={maintSubmittingState === 'submitting' || !quickMaintDesc.trim()}
+                              className="flex items-center gap-1.5 px-5 py-2.5 bg-app-accent text-white font-black uppercase tracking-widest rounded-lg hover:opacity-90 transition-all disabled:opacity-40"
+                            >
+                              {maintSubmittingState === 'submitting' ? (
+                                <>
+                                  <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                  <span>Logging...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Plus className="w-3.5 h-3.5" />
+                                  <span>Dispatch Technician & Log Ticket</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Resize Handle */}

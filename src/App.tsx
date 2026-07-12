@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+// @ts-ignore
+import oaklandMapBg from './assets/images/oakland_macarthur_3d_map_1781415061100.jpg';
+// @ts-ignore
+import rubySensationBg from './assets/images/ruby_sensation_bg_1782953736765.jpg';
 import { 
   TrendingUp, 
   Users, 
@@ -80,6 +84,7 @@ import { EmailTemplates } from './components/EmailTemplates';
 import { EmployersSection } from './components/EmployersSection';
 import { AdminOccupancyMonitor } from './components/AdminOccupancyMonitor';
 import { VisibilityMatrix } from './components/VisibilityMatrix';
+import { AdminNotificationSettings } from './components/AdminNotificationSettings';
 
 const revenueData = [
   { month: 'Jan', revenue: 45000, occupancy: 92 },
@@ -97,7 +102,7 @@ const distributionData = [
 ];
 
 export default function App() {
-  const { theme } = useTheme();
+  const { theme, activePalette } = useTheme();
   const [view, setView] = useState<'hub' | 'admin' | 'tenant' | 'travel'>('hub');
   const [adminTab, setAdminTab] = useState<'portfolio' | 'rent-roll' | 'maintenance' | 'marketing' | 'community' | 'ceo' | 'sfplus' | 'marketmax' | 'vendors' | 'concerns' | 'flow' | 'travel' | 'cameras' | 'legal' | 'email-templates'>('portfolio');
   const [rentRollUnlocked, setRentRollUnlocked] = useState(false);
@@ -133,22 +138,22 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Floating global preview safety banner */}
-      <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
-        <div className="bg-[#FF5F1F]/95 backdrop-blur-md text-white px-5 py-2 rounded-full border border-white/20 text-[9px] font-black uppercase tracking-[0.2em] shadow-[0_8px_30px_rgba(255,95,31,0.5)] flex items-center gap-2 pointer-events-auto select-none">
+      {/* Floating global status indicator */}
+      <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-fade-in">
+        <div className="bg-[#0B1A2D]/95 backdrop-blur-md text-white px-5 py-2.5 rounded-full border border-white/10 text-[9px] font-black uppercase tracking-[0.25em] shadow-[0_8px_30px_rgba(166,75,75,0.4)] flex items-center gap-2 pointer-events-auto select-none">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ruby opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-ruby"></span>
           </span>
-          Site Preview Only — Not Live
+          Only 2 Units Left
         </div>
       </div>
       {/* Navigation */}
       <nav className={`fixed top-0 w-full z-50 border-b border-app-border bg-app-bg/80 backdrop-blur-xl transition-all duration-500`}>
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between bg-[#000000] text-[#79248f]">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between text-app-text">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 font-black tracking-tighter text-2xl">
-              <span className="text-white">RENT-</span>
+              <span className="text-app-text">RENT-</span>
               <span className="text-app-accent">RUBY</span>
             </div>
           </div>
@@ -260,85 +265,39 @@ export default function App() {
           >
             {/* Hero Section */}
             <div className="relative min-h-[90vh] py-32 flex items-center justify-center overflow-hidden bg-zinc-950">
-              <div className="absolute inset-0 z-0">
+              <div className="absolute inset-0 z-0 bg-app-bg">
                 <img 
-                  src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=2000" 
-                  alt="Modern Apartment Interior" 
-                  className="w-full h-full object-cover opacity-40 blur-[2px]"
+                  src={activePalette === 'ruby-sensation' ? rubySensationBg : oaklandMapBg} 
+                  alt="Ruby Sensation Vector Design Background" 
+                  className="w-full h-full object-cover opacity-60 blur-[0.5px] bg-app-bg"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-zinc-950/20"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-app-bg via-app-bg/60 to-app-bg/20"></div>
               </div>
               
-              <div className="relative z-10 max-w-7xl mx-auto px-6 pt-10 text-center space-y-8 bg-[#000000]">
-                <motion.div 
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="flex flex-wrap items-center justify-center gap-2 md:gap-4 bg-white/5 backdrop-blur-xl border border-white/10 p-2 md:p-3 rounded-full max-w-3xl mx-auto shadow-2xl"
-                >
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 border-r border-white/10 pr-4 pl-2 hidden sm:inline">
-                    Immediate Inquiry
-                  </span>
-                  
-                  <a 
-                    href="#neighborhood" 
-                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-white/80 hover:text-app-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5"
-                  >
-                    <ArrowDownCircle className="w-3.5 h-3.5 text-app-accent" /> Find Out More
-                  </a>
-                  
-                  <a 
-                    href="tel:4159008563" 
-                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-white/80 hover:text-app-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5"
-                  >
-                    <Phone className="w-3.5 h-3.5 text-app-accent" /> Call
-                  </a>
-                  
-                  <a 
-                    href="sms:4159008563?body=Hi%20Rent-Ruby%2C%20I'm%20interested%20in%20learning%20more%20about%20the%20units%21" 
-                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-white/80 hover:text-app-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5"
-                  >
-                    <MessageSquare className="w-3.5 h-3.5 text-app-accent" /> Text
-                  </a>
-
-                  <button 
-                    onClick={() => setShowShareModal(true)}
-                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-white/80 hover:text-app-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5 cursor-pointer"
-                  >
-                    <Share2 className="w-3.5 h-3.5 text-app-accent" /> Share
-                  </button>
-                  
-                  <button 
-                    onClick={() => setShowEmailContact(true)}
-                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider bg-app-accent hover:bg-app-accent/90 text-white transition-all py-1.5 px-4 rounded-full shadow-[0_0_15px_rgba(255,95,31,0.5)] border border-white/10 cursor-pointer"
-                  >
-                    <Mail className="w-3.5 h-3.5" /> Email Intake
-                  </button>
-                </motion.div>
-
+              <div className="relative z-10 max-w-7xl mx-auto px-6 pt-10 text-center space-y-8">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-app-accent/20 border border-app-accent/40 rounded-full text-app-accent text-[10px] font-black uppercase tracking-[0.4em] backdrop-blur-xl"
+                  className="inline-flex items-center gap-2 px-5 py-2 bg-app-card/75 border border-app-border rounded-full text-app-accent text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-xl shadow-lg"
                 >
-                  <Sparkles className="w-4 h-4" /> Positve Vibes Live Here Story.
+                  <Sparkles className="w-3.5 h-3.5 text-app-accent" /> Positive Vibes Live Here Story.
                 </motion.div>
                 
                 <div className="space-y-6">
                   <motion.h1 
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-5xl md:text-[7rem] font-sans font-black text-white tracking-tight leading-[0.9] uppercase flex flex-col items-center"
+                    className="text-5xl md:text-[7rem] font-sans font-black text-app-text tracking-tight leading-[0.9] uppercase flex flex-col items-center"
                   >
-                    <span className="italic text-app-accent mb-4 tracking-tighter">Walk, Bike, Hike.</span>
-                    <span className="text-4xl md:text-[5rem] text-white/90">Mosswood, Oakland</span>
+                    <span className="italic text-app-accent mb-4 tracking-tighter">Hike, Walk, Bike, Rail-</span>
+                    <span className="text-4xl md:text-[5rem] text-app-text/90">Mosswood, Oakland</span>
                   </motion.h1>
                   <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="text-xl md:text-2xl font-bold text-[#ffffff] max-w-3xl mx-auto"
+                    className="text-xl md:text-2xl font-bold text-app-text/80 max-w-3xl mx-auto"
                   >
                     Your safe, vibrant anchor connecting you to the best of East Bay's outdoors and city life.
                   </motion.p>
@@ -350,7 +309,7 @@ export default function App() {
                   transition={{ delay: 0.1 }}
                   className="flex flex-wrap justify-center gap-3 md:gap-4 pt-4 pb-2"
                 >
-                  {['GM On Site', 'Maint On Site', 'Free Street Parking', 'Bike Room Inside', 'Storage'].map((amenity, i) => (
+                  {['GM On Site', 'Maint On Site', 'Free Street Parking', 'Bike Room Inside', 'Ultimate Location in Mosswood/Temescal area.'].map((amenity, i) => (
                     <span key={i} className="px-5 py-2.5 bg-app-accent text-white font-black uppercase text-xs md:text-sm tracking-widest rounded-full shadow-[0_0_20px_rgba(255,95,31,0.6)] border border-white/20">
                       {amenity}
                     </span>
@@ -366,24 +325,24 @@ export default function App() {
                   3875 Ruby Street. A 100-year anchor in Oakland's medical and transit district, refined for modern living.
                 </motion.p>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pt-8 border-t border-white/10 mt-8 w-full text-left">
+                <div className="flex flex-col gap-12 pt-8 border-t border-white/10 mt-8 w-full text-left">
                   <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="relative w-full aspect-square max-w-sm mx-auto lg:max-w-full"
+                    className="w-full"
                   >
                     <NeighborhoodRadiusMap />
                   </motion.div>
 
                   <motion.div 
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
-                    className="flex flex-col items-center lg:items-start text-center lg:text-left gap-10"
+                    className="flex flex-col md:flex-row justify-between items-center bg-app-card border-2 border-app-border rounded-[2.5rem] p-8 md:p-10 gap-8 w-full"
                   >
-                    <div className="flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto">
-                      <button className="w-full sm:w-auto px-10 py-5 bg-app-accent text-white rounded-[2rem] font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center gap-3">
+                    <div className="flex flex-col sm:flex-row items-center gap-6 w-full md:w-auto">
+                      <button className="w-full sm:w-auto px-10 py-5 bg-app-accent text-white rounded-[2rem] font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,95,31,0.3)] flex items-center justify-center gap-3">
                         Schedule a Tour
                       </button>
                       <button className="w-full sm:w-auto px-10 py-5 bg-white/10 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-white/20 transition-all border border-white/20">
@@ -391,18 +350,18 @@ export default function App() {
                       </button>
                     </div>
                     
-                    <div className="flex gap-6 sm:gap-12 w-full justify-center lg:justify-start pt-4 border-t border-white/10 mt-4">
-                       <div className="flex flex-col items-center lg:items-start gap-2">
-                          <div className="text-3xl font-black text-white">96</div>
-                          <div className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Walk Score®</div>
+                    <div className="flex gap-8 sm:gap-16 w-full md:w-auto justify-center md:justify-end">
+                       <div className="flex flex-col items-center md:items-start gap-1">
+                          <div className="text-4xl font-sans font-black text-white leading-none">96</div>
+                          <div className="text-[9px] font-black tracking-widest text-[#FF5F1F] uppercase font-mono mt-1">Walk Score®</div>
                        </div>
-                       <div className="flex flex-col items-center lg:items-start gap-2">
-                          <div className="text-3xl font-black text-white">88</div>
-                          <div className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Transit Score®</div>
+                       <div className="flex flex-col items-center md:items-start gap-1">
+                          <div className="text-4xl font-sans font-black text-white leading-none">88</div>
+                          <div className="text-[9px] font-black tracking-widest text-[#FF5F1F] uppercase font-mono mt-1">Transit Score®</div>
                        </div>
-                       <div className="flex flex-col items-center lg:items-start gap-2">
-                          <div className="text-3xl font-black text-white">99</div>
-                          <div className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Bike Score®</div>
+                       <div className="flex flex-col items-center md:items-start gap-1">
+                          <div className="text-4xl font-sans font-black text-white leading-none">99</div>
+                          <div className="text-[9px] font-black tracking-widest text-[#FF5F1F] uppercase font-mono mt-1">Bike Score®</div>
                        </div>
                     </div>
                   </motion.div>
@@ -446,7 +405,7 @@ export default function App() {
               </div>
             </section>
             
-            <section id="travel-nurses" className="py-24 bg-amber-50">
+            <section id="travel-nurses" className="py-24 bg-slate-50 border-y border-slate-200/60">
               <div className="max-w-7xl mx-auto px-6">
                 <TravelNursePortal onBack={() => {}} />
               </div>
@@ -581,14 +540,18 @@ export default function App() {
                   <div className="text-xs font-black uppercase tracking-widest text-app-text/50">Navigation</div>
                   <ul className="space-y-4 text-sm font-bold">
                     <li><a href="tel:4159008563" className="text-app-text/70 hover:text-app-accent transition-colors">Call 415-900-8563</a></li>
-                    <li><button onClick={() => setShowEmailContact(true)} className="text-app-text/70 hover:text-app-accent transition-colors">Email brian@norcalcarbmobile.com</button></li>
+                    <li><button onClick={() => setShowEmailContact(true)} className="text-app-text/70 hover:text-app-accent transition-colors">Email hello@rent-ruby.com</button></li>
                     <li><a href="#" className="text-app-text/70 hover:text-app-accent transition-colors">Maintenance Request</a></li>
                   </ul>
                 </div>
                 <div className="space-y-6">
                   <div className="text-xs font-black uppercase tracking-widest text-app-text/50">Contact</div>
                   <ul className="space-y-4 text-sm font-bold">
-                    <li className="text-app-text/70">brian@norcalcarbmobile.com</li>
+                    <li className="text-app-text/70">
+                      <span className="block text-[#FF5F1F] text-[9px] font-black uppercase tracking-widest mb-0.5">Lauren (AI Assistant)</span>
+                      hello@rent-ruby.com
+                      <span className="block text-white/30 text-[9px] lowercase font-normal tracking-wide mt-0.5">(Forwarded/CC to bryan@norcalcarbmobile.com)</span>
+                    </li>
                     <li className="text-app-text/70">415-900-8563</li>
                     <li className="text-app-text/70">Oakland, CA 94609</li>
                   </ul>
@@ -782,6 +745,7 @@ export default function App() {
               <div className="grid grid-cols-1 gap-8 mb-12">
                 <AdminOccupancyMonitor />
                 <VisibilityMatrix />
+                <AdminNotificationSettings />
               </div>
 
               {/* Portal Navigation Tabs */}

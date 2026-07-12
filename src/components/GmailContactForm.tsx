@@ -106,7 +106,8 @@ export function GmailContactForm({ onClose }: { onClose: () => void }) {
       // Build a beautifully structured HTML email template
       const emailSubject = subject || `[Rent-Ruby Intake] ${inquiryType} - ${fullName}`;
       const emailLines = [];
-      emailLines.push('To: brian@norcalcarbmobile.com');
+      emailLines.push('To: hello@rent-ruby.com');
+      emailLines.push('Cc: bryan@norcalcarbmobile.com');
       emailLines.push('Content-type: text/html;charset=utf-8');
       emailLines.push('MIME-Version: 1.0');
       emailLines.push('Subject: ' + emailSubject);
@@ -230,7 +231,7 @@ export function GmailContactForm({ onClose }: { onClose: () => void }) {
               <Send className="w-8 h-8" />
             </div>
             <h4 className="text-2xl font-bold text-app-text uppercase">Intake Submitted!</h4>
-            <p className="text-app-text/60">Your secure intake has been emailed to Brian at <strong className="text-app-text">brian@norcalcarbmobile.com</strong>.</p>
+            <p className="text-app-text/60">Your secure intake has been emailed to Lauren at <strong className="text-app-text">hello@rent-ruby.com</strong> and copy-forwarded/CC'd to Bryan at <strong className="text-app-text">bryan@norcalcarbmobile.com</strong>.</p>
           </div>
         ) : (
           <div className="space-y-4">

@@ -46,7 +46,7 @@ export const AILaurenWidget = () => {
 
             Information:
             - Property: 3875 Ruby Street, Oakland CA 94609.
-            - Email: brian@norcalcarbmobile.com.
+            - Email: hello@rent-ruby.com (Auto forwarded to bryan@norcalcarbmobile.com).
             - Style: You speak concisely, don't use overwhelming amounts of markdown, and occasionally reference the vibrant Oakland soul. Keep answers brief (1-3 paragraphs max) since this is a chat widget.`
           }
         }),
@@ -58,7 +58,7 @@ export const AILaurenWidget = () => {
         const newMessages = [...prev];
         // replace the typing placeholder
         newMessages[newMessages.length - 1] = {
-          text: data.text || data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm having trouble connecting right now, please reach out to brian@norcalcarbmobile.com.",
+          text: data.text || data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm having trouble connecting right now, please reach out to hello@rent-ruby.com.",
           sender: 'ai'
         };
         return newMessages;
@@ -69,7 +69,7 @@ export const AILaurenWidget = () => {
       setMessages(prev => {
         const newMessages = [...prev];
         newMessages[newMessages.length - 1] = {
-          text: 'Sorry, I encountered an error. Please reach out to brian@norcalcarbmobile.com.',
+          text: 'Sorry, I encountered an error. Please reach out to hello@rent-ruby.com (forwarded to bryan@norcalcarbmobile.com).',
           sender: 'ai'
         };
         return newMessages;

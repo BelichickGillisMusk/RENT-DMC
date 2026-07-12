@@ -6,4 +6,3 @@ coverage/
 *.log
 .env*
 !.env.example
-rentroll_v3.db
