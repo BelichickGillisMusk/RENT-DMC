@@ -2,8 +2,12 @@
 
 This document tracks persistent enhancements and project-specific rules for the Rent-Ruby application.
 
-## Core Aesthetic: Giants-Inspired Modern
-- **Color Palette**: Vibrant Orange (`#FF5F1F` / `app-accent`), Black/Deep Navy (`#0B1A2D`), and White.
+## Core Aesthetic: Multi-Palette Theming System
+- **Color Palette**: Controlled at runtime by `ThemeContext` (see `src/components/ThemeContext.tsx`). All colors are CSS variables on `:root`; do NOT hardcode hex values. Use `var(--app-accent)`, `var(--app-bg)`, `var(--ruby)`, etc.
+  - **Default palette**: `ruby-sensation` — espresso/dusty-rose/coral.
+  - **Legacy/original palette**: `giants-orange` ("Classic Legacy") — deep navy `#0B1A2D` + vibrant orange `#FF5F1F`. Use `id: 'giants-orange'` to reference it.
+  - Six total palettes: `ruby-sensation`, `future-dusk`, `cherry-lacquer`, `aquatic-awe`, `apricot-sage` (only light palette), `giants-orange`.
+  - See `docs/theme-system.md` for the full palette reference.
 - **Typography**: 
   - Headings: Bold, tight-tracking sans-serif (Inter/font-sans).
   - Accents: Elegant serif italics for subheadings and distances.
@@ -27,7 +31,11 @@ This document tracks persistent enhancements and project-specific rules for the 
 
 ### 2. Navigation & UX
 - **Simplified Nav**: The "Platform" link has been removed from the main navigation to focus on the Hub, Amenities, Neighborhood, and Gallery.
-- **View Toggles**: The app supports three distinct views: Hub (Landing), Admin (Management), and Tenant (Portal).
+- **View Toggles**: The app supports four distinct views:
+  - `hub` — Public-facing landing page (default).
+  - `admin` — Password-gated property management portal.
+  - `tenant` — Tenant self-service portal with Firebase Firestore.
+  - `travel` — Traveling nurse / corporate housing portal (`TravelNursePortal`).
 
 ### 3. Hero Section Specifics
 - **Tagline**: "POSITIVE VIBES LIVE HERE STORY." (Blue text + White/40 label).
