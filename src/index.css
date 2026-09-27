@@ -53,21 +53,23 @@
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
 }
 .dmc-letterhead-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  padding-bottom: 0.65rem;
-  border-bottom: 3px solid #1aad64;
-  border-image: linear-gradient(90deg, #1aad64 0 33%, #f7f9f5 33% 66%, #e86520 66% 100%) 1;
+  padding-bottom: 0.4rem;
+  border-bottom: 1.5px solid var(--app-accent, #ff5f1f);
 }
-.dmc-logo {
-  height: 0.72in;
-  width: auto;
-  max-width: 2.15in;
-  object-fit: contain;
-  object-position: left center;
+.dmc-wordmark {
+  margin: 0;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  font-size: 15pt;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
 }
-.dmc-brand-kicker,
+.dmc-wordmark-rent {
+  color: #161616;
+}
+.dmc-wordmark-dmc {
+  color: var(--app-accent, #ff5f1f);
+}
 .dmc-field-label,
 .dmc-caption,
 .dmc-form-title,
@@ -75,15 +77,8 @@
 .dmc-paper h3 {
   font-family: "Space Grotesk", "Inter", sans-serif;
 }
-.dmc-brand-kicker {
-  margin: 0;
-  font-size: 8.5pt;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
 .dmc-brand-address {
-  margin: 0.1rem 0 0;
+  margin: 0.28rem 0 0;
   font-family: "Space Grotesk", "Inter", sans-serif;
   font-size: 9pt;
 }
@@ -243,10 +238,6 @@
     padding: 1.1rem 1rem 1.4rem;
     border-radius: 1.25rem;
   }
-  .dmc-letterhead-brand {
-    align-items: flex-start;
-    flex-direction: column;
-  }
   .dmc-sign {
     grid-template-columns: 1fr;
   }
@@ -292,7 +283,8 @@
     border-bottom-color: #000 !important;
   }
 
-  .dmc-logo {
+  .dmc-letterhead-brand,
+  .dmc-wordmark-dmc {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }

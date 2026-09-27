@@ -21,7 +21,7 @@ View your app in AI Studio: https://ai.studio/apps/85f4144f-dabc-4ffc-b990-b6a65
 
 ## Print blank landlord forms
 
-Blank DMC Properties forms live in the admin portal. They are empty templates for any unit (unit number and tenant name start blank).
+Blank DMC Properties forms live in the admin portal. They are empty templates for any unit (unit number and tenant name start blank). Each sheet uses a small RentDMC text mark and a thin accent rule. The splash logo is not printed.
 
 1. Open the app and choose **Admin** in the footer view toggle.
 2. Choose **Print Forms** in the top navigation, the mobile menu, or the admin tab bar.

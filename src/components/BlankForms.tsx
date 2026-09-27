@@ -10,8 +10,6 @@ import {
   Receipt,
   type LucideIcon,
 } from 'lucide-react';
-// @ts-ignore logo asset has no type declaration in this project
-import dmcHeader from '../assets/images/dmc-properties-header.png';
 
 type FormId = 'receipt' | 'lead' | 'bedbug' | 'pet' | 'checklist';
 
@@ -177,12 +175,11 @@ function Letterhead({
   return (
     <header className="dmc-letterhead">
       <div className="dmc-letterhead-brand">
-        <img src={dmcHeader} alt="DMC Properties" className="dmc-logo" />
-        <div>
-          <p className="dmc-brand-kicker">DMC Properties · San Francisco</p>
-          <p className="dmc-brand-address">3875 Ruby Street, Oakland, CA 94609</p>
-          <p className="dmc-brand-address">(415) 900-8563 · Powered by Silverback AI</p>
-        </div>
+        <p className="dmc-wordmark">
+          <span className="dmc-wordmark-rent">Rent</span>
+          <span className="dmc-wordmark-dmc">DMC</span>
+        </p>
+        <p className="dmc-brand-address">DMC Properties · 3875 Ruby Street, Oakland, CA 94609 · (415) 900-8563</p>
       </div>
       <h2 className="dmc-form-title">{title}</h2>
       {cite ? <p className="dmc-cite">{cite}</p> : null}
@@ -483,7 +480,10 @@ export const BlankForms: React.FC = () => {
             Blank DMC Properties forms for any unit at 3875 Ruby Street. Leave unit and tenant empty, or type them before you print.
           </p>
         </div>
-        <img src={dmcHeader} alt="DMC Properties" className="h-16 w-auto object-contain object-left" />
+        <p className="font-black tracking-tighter text-3xl leading-none" aria-label="RentDMC">
+          <span className="text-app-text">Rent</span>
+          <span className="text-app-accent">DMC</span>
+        </p>
       </div>
 
       {active === null ? (
