@@ -18,3 +18,15 @@ View your app in AI Studio: https://ai.studio/apps/85f4144f-dabc-4ffc-b990-b6a65
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Print blank landlord forms
+
+Blank DMC Properties forms live in the admin portal. They are empty templates for any unit (unit number and tenant name start blank).
+
+1. Open the app and choose **Admin** in the footer view toggle.
+2. Choose **Print Forms** in the top navigation, the mobile menu, or the admin tab bar.
+3. Open a form: payment / move-in receipt, lead disclosure, bed bug notice (Civ. Code 1954.603), pet acknowledgment, or the official PDF checklist.
+4. Optional: type a unit number and tenant name. Leave them empty to print a blank.
+5. Choose **Print form**, then use the browser print dialog (Save as PDF or AirPrint).
+
+The checklist links to the City of Oakland RAP notice, the Fair Chance notice, and the EPA lead pamphlet. Print those official PDFs as-is. Do not rewrite them.
