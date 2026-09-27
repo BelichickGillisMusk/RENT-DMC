@@ -926,20 +926,19 @@ export default function App() {
                 </section>
               )}
 
-              {/* AI Section */}
-              <section id="ai" className="print-hide">
-                <AIPropertyVisualizer />
-              </section>
-
-              {/* Summary Sheet */}
-              <section id="summary-sheet" className="print-hide">
-                <FeatureSummarySheet />
-              </section>
-
-              {/* Ruby Eco System / Product Tour moved to Admin */}
-              <div className="print-hide">
-                <ProductTour />
-              </div>
+              {adminTab !== 'print-forms' && (
+                <>
+                  <section id="ai" className="print-hide">
+                    <AIPropertyVisualizer />
+                  </section>
+                  <section id="summary-sheet" className="print-hide">
+                    <FeatureSummarySheet />
+                  </section>
+                  <div className="print-hide">
+                    <ProductTour />
+                  </div>
+                </>
+              )}
             </div>
           </motion.div>
         ) : (
