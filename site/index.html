@@ -29,20 +29,7 @@
     <div class="building" role="img" aria-label="3875 Ruby Street, Oakland — real 100-year-old apartment building"></div>
     <div class="vignette" aria-hidden="true"></div>
 
-    <div class="top">
-      <div class="brand">
-        <span class="mark">R</span>
-        <div>
-          <strong>Rent Ruby</strong>
-          <span>3875 Ruby St · 94609</span>
-        </div>
-      </div>
-      <div class="age-pill" title="Built 1924">
-        <em>100</em>
-        <span>years old · 1924</span>
-      </div>
-    </div>
-
+    <div class="hero-stage">
     <div class="hero-copy">
       <p class="kicker">Mosswood · Oakland 94609</p>
       <h1>Location is unreal.<br /><em>Nothing is too far.</em></h1>
@@ -61,6 +48,50 @@
           <span class="value">hello@rent-ruby.com</span>
         </a>
       </div>
+    </div>
+
+    <aside class="hero-side" aria-label="Mailbox move and walkability">
+      <figure class="walk-graphic">
+        <figcaption>
+          <span class="eyebrow">From the front door</span>
+          <strong>How far things are</strong>
+        </figcaption>
+        <div class="walk-scores" aria-label="Walk Score 94, Transit Score 88">
+          <div>
+            <b>94</b>
+            <span>Walk</span>
+          </div>
+          <div>
+            <b>88</b>
+            <span>Transit</span>
+          </div>
+        </div>
+        <ol class="walk-routes">
+          <li>
+            <span class="mins">10</span>
+            <span class="mins-l">min walk</span>
+            <em>Kaiser · Alta Bates · Mosswood Park · MacArthur BART</em>
+          </li>
+          <li>
+            <span class="mins">10</span>
+            <span class="mins-l">min drive or bus</span>
+            <em>Temescal · Piedmont Ave · Trader Joe’s · Target</em>
+          </li>
+          <li>
+            <span class="mins">20</span>
+            <span class="mins-l">min by train</span>
+            <em>San Francisco · Berkeley is closer, about 15</em>
+          </li>
+        </ol>
+      </figure>
+
+      <article class="mail-update">
+        <p class="eyebrow">Resident update</p>
+        <h2>Mailbox move</h2>
+        <p>The building mailboxes are moving. Amazon Hub lockers stay on site. Don’t file a change of address, and don’t ship to a guessed box, until the desk confirms the new drop.</p>
+        <a href="tel:6289993912">Call or text 628-999-3912</a>
+      </article>
+    </aside>
     </div>
 
     <a class="scroll-hook" href="#map">
@@ -141,6 +172,24 @@
       </div>
     </div>
   </section>
+  <button class="desk-launch" id="desk-open" type="button">Desk</button>
+  <section class="desk" id="desk" hidden aria-labelledby="desk-title">
+    <header class="desk-head">
+      <div>
+        <p class="eyebrow" id="desk-kicker">The desk</p>
+        <h2 id="desk-title">Doorman or leasing</h2>
+      </div>
+      <button class="desk-close" id="desk-close" type="button">Close</button>
+    </header>
+    <div class="desk-log" id="desk-log" role="log" aria-live="polite"></div>
+    <div class="desk-chips" id="desk-chips"></div>
+    <form class="desk-form" id="desk-form">
+      <label class="sr-only" for="desk-input">Message the desk</label>
+      <input id="desk-input" name="message" type="text" maxlength="400" autocomplete="off" placeholder="Ask the desk" required />
+      <button type="submit">Send</button>
+    </form>
+  </section>
+  <script src="desk.js"></script>
   <script>
     (function () {
       var bar = document.getElementById("rr-ticker");
