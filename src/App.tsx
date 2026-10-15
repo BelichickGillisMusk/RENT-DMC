@@ -539,7 +539,7 @@ export default function App() {
                 <div className="space-y-6">
                   <div className="text-xs font-black uppercase tracking-widest text-app-text/50">Navigation</div>
                   <ul className="space-y-4 text-sm font-bold">
-                    <li><a href="tel:4159008563" className="text-app-text/70 hover:text-app-accent transition-colors">Call 415-900-8563</a></li>
+                    <li><a href="tel:6289993912" className="text-app-text/70 hover:text-app-accent transition-colors">Call 628-999-3912</a></li>
                     <li><button onClick={() => setShowEmailContact(true)} className="text-app-text/70 hover:text-app-accent transition-colors">Email hello@rent-ruby.com</button></li>
                     <li><a href="#" className="text-app-text/70 hover:text-app-accent transition-colors">Maintenance Request</a></li>
                   </ul>
@@ -552,7 +552,7 @@ export default function App() {
                       hello@rent-ruby.com
                       <span className="block text-white/30 text-[9px] lowercase font-normal tracking-wide mt-0.5">(Forwarded/CC to bryan@norcalcarbmobile.com)</span>
                     </li>
-                    <li className="text-app-text/70">415-900-8563</li>
+                    <li className="text-app-text/70">628-999-3912</li>
                     <li className="text-app-text/70">Oakland, CA 94609</li>
                   </ul>
                 </div>

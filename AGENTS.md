@@ -40,9 +40,7 @@ This document tracks persistent enhancements and project-specific rules for the 
 - **Data**: Prefer real-time patterns with `onSnapshot` if Firebase is used.
 
 ## Cloud Agent development
-- Install with `npm ci`. The lockfile is the source of truth.
-- `npm run dev` starts Express and Vite together (`tsx server.ts`) on port 3000.
-- The first server start creates `rentroll_v3.db` in the repository root. That file is generated local data.
-- `GEMINI_API_KEY` is optional. Hub, admin, and tenant flows use the local API. Only `POST /api/gemini/generate` calls Gemini.
-- A Firestore console warning that database `(default)` was not found comes from the committed Firebase config. The SQLite API routes still respond.
-- Checks: `npm run lint` (`tsc --noEmit`) and `npm run build`. There is no test script.
+- The public site is the static Cloudflare Pages site in `site/`. `npm run dev` serves it on port 3000. `npm run build` copies `site/` to `dist/` for Pages.
+- Phone on the site is 628-999-3912. The notices ticker reads `site/notices.json`.
+- The tenant sign-in app is not part of the public site. `/login` redirects home.
+- `npm run build:app` still builds the older Express dashboard. That dashboard is not what rent-ruby.com publishes.
