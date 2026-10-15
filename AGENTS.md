@@ -38,3 +38,9 @@ This document tracks persistent enhancements and project-specific rules for the 
 - **Animations**: Always use `motion/react`.
 - **Styling**: Strictly Tailwind CSS.
 - **Data**: Prefer real-time patterns with `onSnapshot` if Firebase is used.
+
+## Cloud Agent development
+- The public site is the static Cloudflare Pages site in `site/`. `npm run dev` serves it on port 3000. `npm run build` copies `site/` to `dist/` for Pages.
+- Phone on the site is 628-999-3912. The notices ticker reads `site/notices.json`.
+- The tenant sign-in app is not part of the public site. `/login` redirects home.
+- `npm run build:app` still builds the older Express dashboard. That dashboard is not what rent-ruby.com publishes.
