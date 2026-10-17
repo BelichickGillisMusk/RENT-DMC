@@ -193,20 +193,30 @@
         </article>
       </div>
 
-      <!-- Map is a picture. The whole card opens Google Maps. -->
-      <a class="map-card" href="https://maps.google.com/?q=3875+Ruby+St+Oakland+CA+94609" target="_blank" rel="noopener noreferrer">
-        <img
-          class="map-still"
-          src="assets/neighborhood-map.png"
-          width="1280"
-          height="860"
-          alt="Map around 3875 Ruby Street. Pins for MacArthur BART, Kaiser, the 580 and 24 ramps, Temescal, Piedmont Ave, and Uptown. UC Berkeley is one BART ride north."
-        />
-        <span class="map-card-foot">
+      <!-- Still map until a click. Trackpad pinch must not zoom the page. -->
+      <div class="map-card">
+        <div class="map-stage">
+          <img
+            class="map-still"
+            src="assets/neighborhood-map.png"
+            width="1280"
+            height="860"
+            alt="Map around 3875 Ruby Street. Pins for MacArthur BART, Kaiser, the 580 and 24 ramps, Temescal, Piedmont Ave, and Uptown. UC Berkeley is one BART ride north."
+          />
+          <iframe
+            class="map-live"
+            title="Interactive map of 3875 Ruby Street, Oakland"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            data-src="https://maps.google.com/maps?q=3875+Ruby+St+Oakland+CA+94609&amp;z=14&amp;output=embed"
+          ></iframe>
+          <button class="map-arm" type="button"><span>Click to zoom the map</span></button>
+        </div>
+        <div class="map-card-foot">
           <span class="pin-live">● 3875 Ruby St · Oakland 94609</span>
-          <span class="map-open">Open Google Maps →</span>
-        </span>
-      </a>
+          <a href="https://maps.google.com/?q=3875+Ruby+St+Oakland+CA+94609" target="_blank" rel="noopener noreferrer">Open Google Maps →</a>
+        </div>
+      </div>
 
       <!-- 3) Amenities stand out -->
       <div class="amenities-block">
@@ -269,6 +279,26 @@
           bar.hidden = false;
         })
         .catch(function () { bar.remove(); });
+    })();
+    (function () {
+      var card = document.querySelector(".map-card");
+      if (!card) return;
+      var stage = card.querySelector(".map-stage");
+      var arm = card.querySelector(".map-arm");
+      var frame = card.querySelector(".map-live");
+      function armed() { return card.classList.contains("is-live"); }
+      function blockPinch(e) {
+        if (armed()) return;
+        if (e.ctrlKey) e.preventDefault();
+      }
+      stage.addEventListener("wheel", blockPinch, { passive: false });
+      stage.addEventListener("gesturestart", function (e) { if (!armed()) e.preventDefault(); });
+      stage.addEventListener("gesturechange", function (e) { if (!armed()) e.preventDefault(); });
+      arm.addEventListener("click", function () {
+        if (!frame.getAttribute("src")) frame.src = frame.getAttribute("data-src");
+        card.classList.add("is-live");
+        arm.disabled = true;
+      });
     })();
   </script>
   <!-- Cloudflare Web Analytics -->

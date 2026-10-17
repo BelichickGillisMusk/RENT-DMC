@@ -676,41 +676,80 @@ a {
   font-weight: 700;
 }
 
-/* Map is a still. The card is the link, so the page scroll is never captured. */
+/* Still until click. Pinch and wheel do not zoom it. */
 .map-card {
-  display: block;
   background: var(--card);
   border-radius: 1.5rem;
   border: 1px solid var(--line);
   box-shadow: 0 22px 60px rgba(11, 26, 45, 0.1);
   overflow: hidden;
   margin-bottom: 1.75rem;
-  color: inherit;
-  text-decoration: none;
 }
 
-.map-card:focus-visible {
-  outline: 3px solid var(--ruby);
-  outline-offset: 3px;
+.map-stage {
+  position: relative;
+  aspect-ratio: 1280 / 860;
+  background: #dfe6ef;
+  touch-action: pan-y;
+}
+
+.map-still,
+.map-live {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .map-still {
+  object-fit: cover;
+}
+
+.map-live {
+  display: none;
+}
+
+.map-card.is-live .map-still,
+.map-card.is-live .map-arm {
+  display: none;
+}
+
+.map-card.is-live .map-live {
   display: block;
-  width: 100%;
-  height: auto;
-  background: #dfe6ef;
 }
 
-.map-open {
-  font-weight: 700;
-  letter-spacing: 0.06em;
+.map-arm {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin: 0;
+  border: 0;
+  padding: 0 0.8rem 0.85rem;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+  color: #fff;
+  font-family: var(--cond);
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 0.7rem;
-  opacity: 0.9;
 }
 
-.map-card:hover .map-open {
-  color: var(--hot);
+.map-arm:focus-visible {
+  outline: 3px solid var(--ruby);
+  outline-offset: -6px;
+}
+
+.map-arm span {
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  white-space: nowrap;
 }
 
 .map-card-foot {
@@ -947,6 +986,10 @@ a {
 
   .place-top h3 {
     font-size: 1.15rem;
+  }
+
+  .map-arm {
+    font-size: 0.95rem;
   }
 }
 
