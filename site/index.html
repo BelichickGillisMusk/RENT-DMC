@@ -241,12 +241,12 @@
       </div>
     </div>
   </section>
-  <button class="desk-launch" id="desk-open" type="button">Desk</button>
+  <button class="desk-launch" id="desk-open" type="button" aria-controls="desk">Door guy</button>
   <section class="desk" id="desk" hidden aria-labelledby="desk-title">
     <header class="desk-head">
       <div>
-        <p class="eyebrow" id="desk-kicker">The desk</p>
-        <h2 id="desk-title">Doorman or leasing</h2>
+        <p class="eyebrow" id="desk-kicker">Oakland 94609</p>
+        <h2 id="desk-title">The door guy</h2>
       </div>
       <button class="desk-close" id="desk-close" type="button">Close</button>
     </header>
@@ -254,10 +254,11 @@
     <div class="desk-chips" id="desk-chips"></div>
     <form class="desk-form" id="desk-form">
       <label class="sr-only" for="desk-input">Message the desk</label>
-      <input id="desk-input" name="message" type="text" maxlength="400" autocomplete="off" placeholder="Ask the desk" required />
+      <input id="desk-input" name="message" type="text" maxlength="400" autocomplete="off" placeholder="What's good tomorrow?" required />
       <button type="submit">Send</button>
     </form>
   </section>
+  <script src="door-book.js"></script>
   <script src="desk.js"></script>
   <script>
     (function () {

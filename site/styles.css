@@ -1615,6 +1615,10 @@ a {
   border: 1px solid var(--line);
 }
 
+.desk-msg.desk-pending {
+  opacity: 0.65;
+}
+
 .desk-msg.desk-out {
   justify-self: end;
   background: var(--wine);
