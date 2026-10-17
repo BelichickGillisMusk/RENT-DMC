@@ -77,7 +77,7 @@
       return "Mail and packages aren't posted here. Call or text " + phoneLink() + ".";
     }
     if (/walk|bart|kaiser|park|transit|how far|score|temescal|trader/.test(q)) {
-      return "Walk Score 94, Transit Score 88. About 10 minutes on foot to Kaiser, Alta Bates, Mosswood Park, and MacArthur BART. About 10 minutes by car or bus to Temescal, Piedmont Ave, Trader Joe's, and Target. The train is about 20 minutes to San Francisco and 15 to Berkeley.";
+      return "Walk Score 94, Transit Score 88. MacArthur BART is about a 10 minute walk. Kaiser and Alta Bates Summit are about a 10 minute walk. CA-24, I-580, and I-980 are about a 2 to 3 minute drive. Temescal and Piedmont Ave are about a 10 to 15 minute walk. Uptown is about 7 minutes by car or one BART stop. UC Berkeley is about 15 minutes by BART or car. I don't have live vacancies or prices in this chat.";
     }
     if (/laundry|bike|parking|pet|patio|grill|amenit/.test(q)) {
       return "On site: laundry, indoor bike storage, a back patio with a grill and patio set, and free street parking. The building is pet friendly. Maintenance is on site, and it's locally owned. 24 units at 3875 Ruby St.";
