@@ -45,7 +45,7 @@
     if (next === "resident") {
       kicker.textContent = "Doorman";
       title.textContent = "For residents";
-      setChips(["Mailbox move", "Package", "Maintenance", "Laundry"]);
+      setChips(["Package", "Maintenance", "Laundry", "Parking"]);
       return;
     }
     if (next === "prospect") {
@@ -64,7 +64,7 @@
 
     if (/i live here|i'm a resident|im a resident|resident|tenant|doorman/.test(q)) {
       setRole("resident");
-      return "You're with the doorman. Mailboxes are moving, Amazon Hub lockers are still on site, and anything unsafe is a phone call, not a message. What do you need?";
+      return "You're with the doorman. Amazon Hub lockers are on site, and anything unsafe is a phone call, not a message. What do you need?";
     }
     if (/i'm looking|im looking|looking|tour|lease|rent a|prospect|available/.test(q) && !role) {
       setRole("prospect");
@@ -74,10 +74,10 @@
       return "Call " + phoneLink() + " now. If someone is hurt or you smell gas, call 911 first. Don't wait on email.";
     }
     if (/mail|mailbox|usps|change of address|forward/.test(q)) {
-      return "The building mailboxes are moving. Amazon Hub lockers stay on site. Don't file a change of address, and don't ship to a guessed box, until the desk confirms the new drop. Call or text " + phoneLink() + ".";
+      return "For building mail, call or text " + phoneLink() + ". Amazon Hub lockers are on site for packages.";
     }
     if (/package|amazon|locker|delivery/.test(q)) {
-      return "Amazon Hub lockers are still on site. Those are separate from the mailboxes that are moving. If a package is missing, call or text " + phoneLink() + ".";
+      return "Amazon Hub lockers are on site. If a package is missing, call or text " + phoneLink() + ".";
     }
     if (/walk|bart|kaiser|park|transit|how far|score|temescal|trader/.test(q)) {
       return "Walk Score 94, Transit Score 88. MacArthur BART is about a 10 minute walk. Kaiser and Alta Bates Summit are about a 10 minute walk. CA-24, I-580, and I-980 are about a 2 to 3 minute drive. Temescal and Piedmont Ave are about a 10 to 15 minute walk. Uptown is about 7 minutes by car or one BART stop. UC Berkeley is about 15 minutes by BART or car. I don't have live vacancies or prices in this chat.";
@@ -98,7 +98,7 @@
       return "Tell me which desk you need. Residents get the doorman. People looking to rent get the leasing desk.";
     }
     if (role === "resident") {
-      return "I can help with the mailbox move, packages, laundry, bikes, parking, pets, or maintenance. For anything I shouldn't guess, call " + phoneLink() + ".";
+      return "I can help with packages, laundry, bikes, parking, pets, or maintenance. For anything I shouldn't guess, call " + phoneLink() + ".";
     }
     return "The short version: Walker’s paradise, excellent transit, real 1924 building, 24 units. For a price or a tour, call " + phoneLink() + ".";
   }
