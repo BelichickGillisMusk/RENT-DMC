@@ -226,8 +226,7 @@ a {
   min-width: 0;
 }
 
-.walk-graphic,
-.mail-update {
+.walk-graphic {
   margin: 0;
   color: var(--ink);
   background: rgba(250, 246, 241, 0.94);
@@ -337,45 +336,6 @@ a {
   font-size: 0.92rem;
   line-height: 1.25;
   color: var(--ink);
-}
-
-.mail-update {
-  padding: 0.85rem 0.95rem 0.9rem;
-  background: var(--wine);
-  color: var(--cream);
-}
-
-.mail-update .eyebrow {
-  color: #ffb4a0;
-}
-
-.mail-update h2 {
-  margin: 0 0 0.35rem;
-  font-family: var(--cond);
-  font-size: 1.7rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  line-height: 0.95;
-}
-
-.mail-update p {
-  margin: 0 0 0.65rem;
-  font-size: 0.92rem;
-  line-height: 1.4;
-  color: rgba(250, 246, 241, 0.92);
-}
-
-.mail-update a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.2rem;
-  font-family: var(--cond);
-  font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: 0.02em;
-  color: #fff;
-  border-bottom: 2px solid var(--hot);
 }
 
 .kicker {
