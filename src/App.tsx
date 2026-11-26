@@ -85,6 +85,7 @@ import { EmployersSection } from './components/EmployersSection';
 import { AdminOccupancyMonitor } from './components/AdminOccupancyMonitor';
 import { VisibilityMatrix } from './components/VisibilityMatrix';
 import { AdminNotificationSettings } from './components/AdminNotificationSettings';
+import { BlankForms } from './components/BlankForms';
 
 const revenueData = [
   { month: 'Jan', revenue: 45000, occupancy: 92 },
@@ -104,7 +105,7 @@ const distributionData = [
 export default function App() {
   const { theme, activePalette } = useTheme();
   const [view, setView] = useState<'hub' | 'admin' | 'tenant' | 'travel'>('hub');
-  const [adminTab, setAdminTab] = useState<'portfolio' | 'rent-roll' | 'maintenance' | 'marketing' | 'community' | 'ceo' | 'sfplus' | 'marketmax' | 'vendors' | 'concerns' | 'flow' | 'travel' | 'cameras' | 'legal' | 'email-templates'>('portfolio');
+  const [adminTab, setAdminTab] = useState<'portfolio' | 'rent-roll' | 'maintenance' | 'marketing' | 'community' | 'ceo' | 'sfplus' | 'marketmax' | 'vendors' | 'concerns' | 'flow' | 'travel' | 'cameras' | 'legal' | 'email-templates' | 'print-forms'>('portfolio');
   const [rentRollUnlocked, setRentRollUnlocked] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showOwnerVision, setShowOwnerVision] = useState(false);
@@ -139,7 +140,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Floating global status indicator */}
-      <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-fade-in">
+      <div className="print-hide fixed top-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-fade-in">
         <div className="bg-[#0B1A2D]/95 backdrop-blur-md text-white px-5 py-2.5 rounded-full border border-white/10 text-[9px] font-black uppercase tracking-[0.25em] shadow-[0_8px_30px_rgba(166,75,75,0.4)] flex items-center gap-2 pointer-events-auto select-none">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ruby opacity-75"></span>
@@ -149,7 +150,7 @@ export default function App() {
         </div>
       </div>
       {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 border-b border-app-border bg-app-bg/80 backdrop-blur-xl transition-all duration-500`}>
+      <nav className={`print-hide fixed top-0 w-full z-50 border-b border-app-border bg-app-bg/80 backdrop-blur-xl transition-all duration-500`}>
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between text-app-text">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 font-black tracking-tighter text-2xl">
@@ -172,6 +173,7 @@ export default function App() {
                 <button onClick={() => setAdminTab('portfolio')} className="text-app-text/60 hover:text-app-text transition-colors">Portfolio</button>
                 <button onClick={() => { setRentRollUnlocked(true); setAdminTab('rent-roll'); }} className="text-app-text/60 hover:text-app-text transition-colors">Rent Roll</button>
                 <button onClick={() => setAdminTab('legal')} className="text-app-text/60 hover:text-app-text transition-colors">Legal & Compliance</button>
+                <button onClick={() => setAdminTab('print-forms')} className="text-app-text/60 hover:text-app-text transition-colors">Print Forms</button>
                 <button onClick={() => setAdminTab('ceo')} className="text-app-text/60 hover:text-app-text transition-colors">CEO Briefing</button>
               </>
             ) : (
@@ -215,7 +217,7 @@ export default function App() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`fixed inset-0 z-40 pt-24 px-6 ${view === 'hub' ? 'bg-app-bg text-app-text' : 'bg-zinc-950 text-white'} md:hidden`}
+            className={`print-hide fixed inset-0 z-40 pt-24 px-6 ${view === 'hub' ? 'bg-app-bg text-app-text' : 'bg-zinc-950 text-white'} md:hidden`}
           >
             <div className="flex flex-col gap-8 text-2xl font-serif font-bold">
               {view === 'hub' ? (
@@ -231,6 +233,7 @@ export default function App() {
                   <button onClick={() => { setAdminTab('portfolio'); setIsMenuOpen(false); }} className="text-left py-2">Portfolio</button>
                   <button onClick={() => { setRentRollUnlocked(true); setAdminTab('rent-roll'); setIsMenuOpen(false); }} className="text-left py-2">Rent Roll</button>
                   <button onClick={() => { setAdminTab('legal'); setIsMenuOpen(false); }} className="text-left py-2">Legal & Forms</button>
+                  <button onClick={() => { setAdminTab('print-forms'); setIsMenuOpen(false); }} className="text-left py-2">Print Forms</button>
                   <button onClick={() => { setAdminTab('ceo'); setIsMenuOpen(false); }} className="text-left py-2">CEO Briefing</button>
                 </>
               ) : (
@@ -587,11 +590,11 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="min-h-screen bg-app-bg pt-32 pb-20 px-6"
+            className="min-h-screen bg-app-bg pt-32 pb-20 px-6 print:bg-white print:p-0"
           >
             <div className="max-w-7xl mx-auto">
               {/* Portal Header */}
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+              <div className="print-hide flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
                 <div>
                   <h2 className="text-4xl font-serif font-black text-app-text">Property Admin Portal</h2>
                   <p className="text-app-text/50 mt-2">Secure management for 3875 Ruby Street.</p>
@@ -625,8 +628,10 @@ export default function App() {
                 </div>
               </div>
 
+              {adminTab !== 'print-forms' && (
+              <>
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+              <div className="print-hide grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                 {[
                   { label: 'Total Revenue', value: '$42,850', trend: '+12.5%', icon: DollarSign, color: 'text-ruby', bg: 'bg-ruby/5', tab: 'sfplus' },
                   { label: 'Portfolio Occupancy', value: '23 / 24', trend: '95.8%', icon: Users, color: 'text-ruby', bg: 'bg-ruby/5', tab: 'rent-roll' },
@@ -742,14 +747,16 @@ export default function App() {
               </div>
 
               {/* Dynamic Occupancy and Visibility Controls */}
-              <div className="grid grid-cols-1 gap-8 mb-12">
+              <div className="print-hide grid grid-cols-1 gap-8 mb-12">
                 <AdminOccupancyMonitor />
                 <VisibilityMatrix />
                 <AdminNotificationSettings />
               </div>
+              </>
+              )}
 
               {/* Portal Navigation Tabs */}
-              <div className="flex gap-8 border-b border-app-text/5 mb-12 overflow-x-auto pb-px">
+              <div className="print-hide flex gap-8 border-b border-app-text/5 mb-12 overflow-x-auto pb-px">
                 <button 
                   onClick={() => setAdminTab('portfolio')}
                   className={`pb-4 text-sm font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${adminTab === 'portfolio' ? 'text-app-accent' : 'text-app-text/40 hover:text-app-text'}`}
@@ -790,6 +797,13 @@ export default function App() {
                 >
                   Legal Log
                   {adminTab === ('legal' as any) && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-app-accent" />}
+                </button>
+                <button
+                  onClick={() => setAdminTab('print-forms')}
+                  className={`pb-4 text-sm font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${adminTab === 'print-forms' ? 'text-app-accent' : 'text-app-text/40 hover:text-app-text'}`}
+                >
+                  Print Forms
+                  {adminTab === 'print-forms' && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-app-accent" />}
                 </button>
                 <button 
                   onClick={() => setAdminTab('sfplus')}
@@ -874,6 +888,10 @@ export default function App() {
                 <section id="legal" className="py-12">
                   <AdminLegalLog />
                 </section>
+              ) : adminTab === 'print-forms' ? (
+                <section id="print-forms" className="pb-12">
+                  <BlankForms />
+                </section>
               ) : adminTab === 'sfplus' ? (
                 <section id="sfplus" className="py-12">
                   <SFPlusModule />
@@ -908,18 +926,19 @@ export default function App() {
                 </section>
               )}
 
-              {/* AI Section */}
-              <section id="ai">
-                <AIPropertyVisualizer />
-              </section>
-
-              {/* Summary Sheet */}
-              <section id="summary-sheet">
-                <FeatureSummarySheet />
-              </section>
-
-              {/* Ruby Eco System / Product Tour moved to Admin */}
-              <ProductTour />
+              {adminTab !== 'print-forms' && (
+                <>
+                  <section id="ai" className="print-hide">
+                    <AIPropertyVisualizer />
+                  </section>
+                  <section id="summary-sheet" className="print-hide">
+                    <FeatureSummarySheet />
+                  </section>
+                  <div className="print-hide">
+                    <ProductTour />
+                  </div>
+                </>
+              )}
             </div>
           </motion.div>
         ) : (
@@ -941,7 +960,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <footer className="py-12 border-t border-app-text/5 bg-[#e7eaef]">
+      <footer className="print-hide py-12 border-t border-app-text/5 bg-[#e7eaef]">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-ruby flex items-center justify-center text-white font-black text-xs">R</div>
@@ -987,7 +1006,9 @@ export default function App() {
           </div>
         </div>
       </footer>
-      <AILaurenWidget />
+      <div className="print-hide">
+        <AILaurenWidget />
+      </div>
     </div>
   );
 }
