@@ -100,19 +100,29 @@
       <p class="eyebrow">Neighborhood</p>
       <h2 class="map-title">Around the building</h2>
       <div class="map-layout">
-        <a class="map-card" href="https://maps.google.com/?q=3875+Ruby+St+Oakland+CA+94609" target="_blank" rel="noopener noreferrer">
-          <img
-            class="map-still"
-            src="assets/neighborhood-map.png"
-            width="1280"
-            height="860"
-            alt="Map around 3875 Ruby Street. Pins for MacArthur BART, Kaiser, the 580 and 24 ramps, Temescal, Piedmont Ave, and Uptown. UC Berkeley is one BART ride north."
-          />
-          <span class="map-card-foot">
+        <div class="map-card">
+          <div class="map-stage">
+            <img
+              class="map-still"
+              src="assets/neighborhood-map.png"
+              width="1280"
+              height="860"
+              alt="Map around 3875 Ruby Street. Pins for MacArthur BART, Kaiser, the 580 and 24 ramps, Temescal, Piedmont Ave, and Uptown. UC Berkeley is one BART ride north."
+            />
+            <iframe
+              class="map-live"
+              title="Interactive map of 3875 Ruby Street, Oakland"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              data-src="https://maps.google.com/maps?q=3875+Ruby+St+Oakland+CA+94609&amp;z=14&amp;output=embed"
+            ></iframe>
+            <button class="map-arm" type="button"><span>Click to zoom the map</span></button>
+          </div>
+          <div class="map-card-foot">
             <span class="pin-live">● 3875 Ruby St · Oakland 94609</span>
-            <span class="map-open">Open Google Maps →</span>
-          </span>
-        </a>
+            <a href="https://maps.google.com/?q=3875+Ruby+St+Oakland+CA+94609" target="_blank" rel="noopener noreferrer">Open Google Maps →</a>
+          </div>
+        </div>
         <aside class="map-legend" aria-label="Distances from 3875 Ruby Street">
           <h3>Legend</h3>
           <ol>
@@ -134,6 +144,12 @@
       </div>
     </div>
   </section>
+  <!-- rent-ruby.com legal footer: place the two PDFs at the site root (/privacy-policy.pdf, /fair-housing.pdf) -->
+  <p class="legal-footer" style="font-size:12px;line-height:1.5;margin:12px 0 80px;padding:0 16px;text-align:center;color:var(--ink);">
+    DMC Properties &middot; Equal Housing Opportunity &middot;
+    <a href="/privacy-policy.pdf" style="color:var(--ink);">Privacy</a> &middot;
+    <a href="/fair-housing.pdf" style="color:var(--ink);">Fair Housing &amp; Accessibility</a>
+  </p>
   <button class="desk-launch" id="desk-open" type="button">Desk</button>
   <section class="desk" id="desk" hidden aria-labelledby="desk-title">
     <header class="desk-head">
@@ -184,6 +200,26 @@
         button.addEventListener("click", function () {
           setLang(button.getAttribute("data-set-lang"));
         });
+      });
+    })();
+    (function () {
+      var card = document.querySelector(".map-card");
+      if (!card) return;
+      var stage = card.querySelector(".map-stage");
+      var arm = card.querySelector(".map-arm");
+      var frame = card.querySelector(".map-live");
+      function armed() { return card.classList.contains("is-live"); }
+      function blockPinch(e) {
+        if (armed()) return;
+        if (e.ctrlKey) e.preventDefault();
+      }
+      stage.addEventListener("wheel", blockPinch, { passive: false });
+      stage.addEventListener("gesturestart", function (e) { if (!armed()) e.preventDefault(); });
+      stage.addEventListener("gesturechange", function (e) { if (!armed()) e.preventDefault(); });
+      arm.addEventListener("click", function () {
+        if (!frame.getAttribute("src")) frame.src = frame.getAttribute("data-src");
+        card.classList.add("is-live");
+        arm.disabled = true;
       });
     })();
   </script>

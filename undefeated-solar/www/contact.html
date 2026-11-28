@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — UNDEFEATED Solar</title>
+<meta name="description" content="Request a California public site review. Statewide corridors; focus on agency, campus, fleet, military & federal jobs.">
+<meta name="theme-color" content="#0c1a2e">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/assets/favicon-undefeated-sun-us.svg" type="image/svg+xml" sizes="any" />
+  <link rel="apple-touch-icon" href="/assets/favicon-undefeated-sun-us.svg" />
+  <link rel="stylesheet" href="/styles.css">
+<style>
+  main { padding: 48px 0 40px; }
+  .layout { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 16px; align-items: start; }
+  @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
+
+  /* Form panel — soft color wash so fields don’t float on pure white */
+  .panel.form-panel {
+    background: linear-gradient(165deg, #f0f4fa 0%, #e8eef8 45%, #f7f3f0 100%);
+    border: 1px solid #c5d0e0;
+    box-shadow: 0 8px 28px rgba(0, 40, 104, 0.06);
+  }
+  .panel.form-panel label {
+    color: #002868;
+    font-weight: 700;
+  }
+  .panel.form-panel input,
+  .panel.form-panel select,
+  .panel.form-panel textarea {
+    background: #ffffff;
+    border: 1.5px solid #8fa3c4;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px rgba(0, 40, 104, 0.04);
+  }
+  .panel.form-panel input:focus,
+  .panel.form-panel select:focus,
+  .panel.form-panel textarea:focus {
+    border-color: #002868;
+    outline: 3px solid rgba(0, 40, 104, 0.18);
+    box-shadow: 0 0 0 1px #002868;
+  }
+  .panel.form-panel input::placeholder,
+  .panel.form-panel textarea::placeholder {
+    color: #6b7a94;
+  }
+  .field-wrap {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid #b8c6dc;
+    border-radius: 12px;
+    padding: 12px 14px 14px;
+    margin-top: 10px;
+  }
+  .field-wrap label { margin-top: 0; }
+  .field-wrap .row { margin-top: 4px; }
+  .aside-panel {
+    background: #f7f8fa;
+    border-color: #d0d5dd;
+  }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap nav">
+    <a class="brand" href="/"><svg class="mark" xmlns="http://www.w3.org/2000/svg" viewBox="16 16 32 32" width="36" height="36" role="img" aria-label="UNDEFEATED Solar sun mark"><circle cx="32" cy="32" r="16" fill="#f0b429"/><text x="32" y="37" text-anchor="middle" font-family="system-ui,Segoe UI,sans-serif" font-size="14" font-weight="800" fill="#0c1a2e">US</text></svg>UNDEFEATED <span>SOLAR</span></a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/military.html">Military</a>
+      <a href="/owners.html">Brief</a>
+      <a class="active" href="/contact.html">Contact</a>
+    </nav>
+    <a class="button" href="/owners.html" style="min-height:40px;padding:0 14px;font-size:11px">Open brief</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="eyebrow">CA statewide · public jobs focus</div>
+  <h1>Show us the <em>public lot</em>.</h1>
+  <p class="lead">Agencies, campuses, fleets, military &amp; federal facilities: send the details below. We reply with a practical fit check and buy path — not a brochure dump.</p>
+
+  <div class="layout">
+    <section class="panel form-panel">
+      <h2 style="font-weight:600;font-size:1.35rem;margin-bottom:6px;letter-spacing:-0.02em;color:#002868">Site review request</h2>
+      <p class="muted" style="margin-bottom:8px;font-size:14px;color:#1a3a6e">Opens your email app with a ready template. Prefer phone? Call San Francisco for demos.</p>
+      <form id="ownerForm">
+        <div class="field-wrap">
+          <label for="name">Your name</label>
+          <input id="name" name="name" required autocomplete="name" placeholder="Jane Owner">
+        </div>
+
+        <div class="field-wrap">
+          <div class="row">
+            <div>
+              <label for="org">Agency / company</label>
+              <input id="org" name="org" placeholder="City, campus, district, LLC…">
+            </div>
+            <div>
+              <label for="role">Role</label>
+              <input id="role" name="role" placeholder="Facilities, PM, procurement">
+            </div>
+          </div>
+        </div>
+
+        <div class="field-wrap">
+          <label for="site">Site address</label>
+          <input id="site" name="site" required placeholder="Street, City, CA">
+        </div>
+
+        <div class="field-wrap">
+          <div class="row">
+            <div>
+              <label for="stalls">Parking stalls / acreage</label>
+              <input id="stalls" name="stalls" placeholder="e.g. 180 stalls">
+            </div>
+            <div>
+              <label for="type">Site type</label>
+              <select id="type" name="type">
+                <option value="City / county / state parking">City / county / state parking</option>
+                <option value="Military / federal">Military / federal</option>
+                <option value="Campus / education">Campus / education</option>
+                <option value="Municipal / institutional fleet">Municipal / institutional fleet</option>
+                <option value="Public housing / authority">Public housing / authority</option>
+                <option value="Private multifamily (secondary)">Private multifamily (secondary)</option>
+                <option value="Retail / mixed-use (secondary)">Retail / mixed-use (secondary)</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-wrap">
+          <label for="chargers">Charger goals</label>
+          <select id="chargers" name="chargers">
+            <option value="Undecided">Undecided</option>
+            <option value="Shade + solar first, chargers later">Shade + solar first, chargers later</option>
+            <option value="Level 2">Level 2</option>
+            <option value="DC fast">DC fast</option>
+            <option value="Tesla / NACS">Tesla / NACS</option>
+            <option value="Mixed (NACS + CCS + L2)">Mixed (NACS + CCS + L2)</option>
+            <option value="Fleet charging">Fleet charging</option>
+          </select>
+        </div>
+
+        <div class="field-wrap">
+          <div class="row">
+            <div>
+              <label for="region">CA region</label>
+              <select id="region" name="region">
+                <option value="Bay Area">Bay Area</option>
+                <option value="Sacramento / North State">Sacramento / North State</option>
+                <option value="Central Valley">Central Valley</option>
+                <option value="Central Coast">Central Coast</option>
+                <option value="Los Angeles Basin">Los Angeles Basin</option>
+                <option value="Inland Empire">Inland Empire</option>
+                <option value="San Diego">San Diego</option>
+                <option value="Other CA">Other CA</option>
+              </select>
+            </div>
+            <div>
+              <label for="timeline">Timeline / solicitation</label>
+              <input id="timeline" name="timeline" placeholder="Board date, RFP #, or target year">
+            </div>
+          </div>
+        </div>
+
+        <div class="field-wrap">
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" placeholder="Utility status, public works constraints, prime/sub interest, photos coming…"></textarea>
+        </div>
+
+        <div class="actions" style="margin-top:14px">
+          <button class="button" type="submit">Email this request</button>
+          <a class="button secondary" href="tel:+14159008563">Call 415-900-8563</a>
+        </div>
+        <p class="note" style="color:#1a3a6e">No spam list. Pilot review only. Attach lot photos in the email if you have them.</p>
+      </form>
+    </section>
+
+    <aside>
+      <div class="panel aside-panel" style="margin-bottom:12px">
+        <h2 style="font-weight:600;font-size:1.2rem;margin-bottom:12px;letter-spacing:-0.02em">Direct contact</h2>
+        <div class="item">
+          <div class="label">Sales email</div>
+          <div class="value"><a href="/cdn-cgi/l/email-protection#49212c252526093c272d2c2f2c283d2c2d3a2625283b672a2624"><span class="__cf_email__" data-cfemail="78101d141417380d161c1d1e1d190c1d1c0b1714190a561b1715">[email&#160;protected]</span></a></div>
+        </div>
+        <div class="item">
+          <div class="label">San Francisco · demos</div>
+          <div class="value"><a href="tel:+14159008563">415-900-8563</a></div>
+        </div>
+        <div class="item">
+          <div class="label">Sacramento</div>
+          <div class="value"><a href="tel:+19168904427">916-890-4427</a></div>
+        </div>
+        <div class="item">
+          <div class="label">Boston / Florida history</div>
+          <div class="value"><a href="tel:+16173596953">617-359-6953</a></div>
+        </div>
+      </div>
+      <div class="panel aside-panel">
+        <h2 style="font-weight:600;font-size:1.15rem;margin-bottom:8px;letter-spacing:-0.02em">Owner brief</h2>
+        <p class="muted" style="font-size:14px;margin-bottom:12px">Simple mobile brief — works on iPhone and Android.</p>
+        <a class="button" href="/owners.html" style="width:100%">Open brief</a>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer class="site-footer wrap">
+  <div class="footer-row">
+    <span>© 2026 UNDEFEATED Solar · California pilot sites</span>
+    <span><a href="/">Home</a> · <a href="/military.html">Military</a> · <a href="/owners.html">Brief</a></span>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  document.getElementById('ownerForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const g = id => document.getElementById(id).value.trim();
+    const subject = 'UNDEFEATED Solar site review — ' + (g('site') || 'new site');
+    const body = [
+      'Public / CA site review request',
+      '',
+      'Name: ' + g('name'),
+      'Agency / org: ' + g('org'),
+      'Role: ' + g('role'),
+      'Site: ' + g('site'),
+      'CA region: ' + g('region'),
+      'Stalls / acreage: ' + g('stalls'),
+      'Site type: ' + g('type'),
+      'Charger goals: ' + g('chargers'),
+      'Timeline / solicitation: ' + g('timeline'),
+      '',
+      'Notes:',
+      g('notes') || '(none)',
+      '',
+      'Focus: public jobs · corridors: all CA',
+      '— sent from undefeatedsolar.com/contact.html'
+    ].join('\n');
+    window.location.href = 'mailto:hello@undefeatedsolar.com?subject=' +
+      encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  });
+</script>
+</body>
+</html>
