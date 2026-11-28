@@ -1,16 +1,16 @@
 :root {
-  --ink: #0b1a2d;
-  --ruby: #c81e3a;
-  --hot: #ff5a3c;
-  --cream: #faf6f1;
-  --cream-2: #f0e8df;
+  --ink: #1a1a1a;
+  --ruby: #782f40;
+  --hot: #ceb888;
+  --cream: #f7f4ef;
+  --cream-2: #efe8dc;
   --card: #ffffff;
-  --muted: #5c6570;
-  --line: rgba(11, 26, 45, 0.08);
-  --wine: #5c1a2e;
-  --serif: "Instrument Serif", Georgia, serif;
-  --sans: "IBM Plex Sans", system-ui, sans-serif;
-  --cond: "Barlow Condensed", system-ui, sans-serif;
+  --muted: #5c534c;
+  --line: rgba(120, 47, 64, 0.14);
+  --wine: #541e2b;
+  --serif: "acumin-pro", "Open Sans", Georgia, serif;
+  --sans: "acumin-pro", "Open Sans", system-ui, sans-serif;
+  --cond: "acumin-pro-condensed", "acumin-pro", "Open Sans", system-ui, sans-serif;
   --photo: url("assets/hero-1600.jpg");
 }
 
@@ -205,8 +205,8 @@ a {
 
 .hero-stage {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.9fr);
-  gap: 1.25rem 1.5rem;
+  grid-template-columns: minmax(0, 36rem);
+  justify-content: start;
   align-items: end;
   max-width: 1120px;
   width: 100%;
@@ -385,6 +385,7 @@ a {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--hot);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
 }
 
 .hero-copy h1 {
@@ -422,20 +423,27 @@ a {
 }
 
 .contact {
-  display: grid;
-  gap: 0.1rem;
-  min-width: min(100%, 220px);
-  padding: 0.75rem 1rem;
-  border-radius: 1rem;
-  background: rgba(11, 26, 45, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(12px);
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 1.05rem;
+  border-radius: 999px;
+  background: var(--ruby);
+  color: var(--hot);
+  border: 2px solid var(--hot);
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .contact:hover {
   transform: translateY(-1px);
-  border-color: var(--hot);
+  background: var(--wine);
 }
 
 .contact .label {
@@ -505,6 +513,131 @@ a {
 .loc-shell {
   max-width: 1120px;
   margin: 0 auto;
+}
+
+.door-table {
+  width: min(100%, 36rem);
+  margin: 0 0 1.75rem;
+  border-collapse: collapse;
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  overflow: hidden;
+  font-size: 0.92rem;
+}
+
+.door-table caption {
+  caption-side: top;
+  text-align: left;
+  padding: 0 0 0.45rem;
+  font-family: var(--cond);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ruby);
+}
+
+.door-table th,
+.door-table td {
+  padding: 0.45rem 0.7rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.door-table thead th {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--cream-2);
+}
+
+.door-table tbody th {
+  font-weight: 700;
+}
+
+.door-table a {
+  color: var(--ruby);
+  font-weight: 700;
+  border-bottom: 2px solid var(--hot);
+}
+
+.contact-card h2 {
+  margin: 0 0 0.2rem;
+  font-family: var(--cond);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 0.95;
+}
+
+.intake-note {
+  margin: 0 0 0.45rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.contact-card label {
+  margin-top: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+}
+
+.contact-card input,
+.contact-card select,
+.contact-card textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+}
+
+.intake-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+.intake-send,
+.intake-cancel,
+.text-btn {
+  font-family: var(--cond);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.intake-send {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.intake-cancel,
+.text-btn {
+  border: 0;
+  background: transparent;
+  color: var(--ruby);
+  padding: 0.6rem 0.4rem;
+}
+
+.map-foot .text-btn {
+  font-size: 1.15rem;
+  border-bottom: 2px solid rgba(120, 47, 64, 0.3);
+  border-radius: 0;
+  padding: 0;
 }
 
 .eyebrow {
@@ -766,7 +899,182 @@ a {
 .pin-live {
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #7dffa8;
+  color: var(--hot);
+}
+
+.map-title {
+  margin: 0 0 1rem;
+  font-family: var(--cond);
+  font-weight: 800;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 0.7fr);
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1.75rem;
+}
+
+.map-layout .map-card {
+  margin-bottom: 0;
+}
+
+.map-legend {
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  padding: 1rem 1rem 0.9rem;
+}
+
+.map-legend h3 {
+  margin: 0 0 0.6rem;
+  font-family: var(--cond);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ruby);
+}
+
+.map-legend ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.map-legend li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.92rem;
+}
+
+.map-legend a {
+  color: var(--ink);
+  font-weight: 700;
+  border-bottom: 2px solid var(--hot);
+}
+
+.map-legend span {
+  color: var(--muted);
+  text-align: right;
+}
+
+.bart-note {
+  margin: 0.8rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 2px solid var(--ruby);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.en { display: inline; }
+.es { display: none; }
+html[lang="es"] .en { display: none; }
+html[lang="es"] .es { display: inline; }
+
+.lang-switch {
+  display: inline-flex;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.lang-switch button {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-family: var(--cond);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+}
+
+.lang-switch button[aria-pressed="true"] {
+  background: #fff;
+  color: #1a1a1a;
+}
+
+.contact-page {
+  background: #fff;
+  color: #1a1a1a;
+  padding: 3rem 1.35rem;
+}
+
+.contact-page .eyebrow {
+  color: #1a1a1a;
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 36rem) minmax(14rem, 18rem);
+  gap: 1.25rem;
+  max-width: 58rem;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.perk-graphic {
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+  border-radius: 1rem;
+  padding: 0.85rem;
+}
+
+.perk-graphic p {
+  margin: 0 0 0.55rem;
+  font-family: var(--cond);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+}
+
+.perk-graphic ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.perk-graphic li {
+  border: 1px solid #1a1a1a;
+  border-radius: 0.45rem;
+  padding: 0.4rem 0.45rem;
+  min-height: 3.2rem;
+}
+
+.perk-graphic strong {
+  display: block;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.contact-card {
+  width: 100%;
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+  border-radius: 1.4rem;
+  padding: 1.4rem 1.3rem 1.2rem;
+  box-shadow: none;
 }
 
 .map-card-foot a {
@@ -920,6 +1228,18 @@ a {
 }
 
 @media (max-width: 900px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .map-legend span {
+    white-space: normal;
+  }
+
   .hero-stage {
     grid-template-columns: 1fr;
     padding-top: 1.6rem;
@@ -1510,7 +1830,7 @@ a {
 
 .desk-launch {
   position: fixed;
-  left: 1rem;
+  right: 1rem;
   bottom: 1rem;
   z-index: 20;
   border: 0;
