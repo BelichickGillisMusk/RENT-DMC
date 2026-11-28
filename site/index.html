@@ -20,11 +20,11 @@
   <link rel="preload" as="image" href="assets/hero-1600.jpg" fetchpriority="high" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://use.typekit.net/qwg1fji.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div id="rr-ticker" class="rr-ticker" hidden></div>
   <header class="hero">
     <div class="building" role="img" aria-label="3875 Ruby Street, Oakland — real 100-year-old apartment building"></div>
     <div class="vignette" aria-hidden="true"></div>
@@ -39,62 +39,11 @@
         Target, Trader Joe’s, Chick-fil-A about <strong>10 min drive or bus</strong>.
       </p>
       <div class="contact-row">
-        <a class="contact phone" href="tel:6289993912">
-          <span class="label">Call / text</span>
-          <span class="value">628-999-3912</span>
-        </a>
-        <a class="contact email" href="mailto:fsu9913@gmail.com?subject=Inquiry%20via%20hello@rent-ruby.com%20-%203875%20Ruby%20St">
-          <span class="label">Email</span>
-          <span class="value">hello@rent-ruby.com</span>
-        </a>
+        <a class="contact phone" href="tel:6289993912">Call us</a>
+        <a class="contact email" href="mailto:fsu9913@gmail.com?subject=Inquiry%20via%20hello@rent-ruby.com%20-%203875%20Ruby%20St">Email us</a>
+        <button class="contact contact-form" type="button" id="open-intake">Contact us</button>
       </div>
     </div>
-
-    <aside class="hero-side" aria-label="Walkability">
-      <figure class="walk-graphic">
-        <figcaption>
-          <span class="eyebrow">From the front door</span>
-          <strong>How far things are</strong>
-        </figcaption>
-        <div class="walk-scores" aria-label="Walk Score 94, Transit Score 88">
-          <div>
-            <b>94</b>
-            <span>Walk</span>
-          </div>
-          <div>
-            <b>88</b>
-            <span>Transit</span>
-          </div>
-        </div>
-        <ol class="walk-routes">
-          <li>
-            <span class="mins">10</span>
-            <span class="mins-l">min walk</span>
-            <em>MacArthur BART · half a mile</em>
-          </li>
-          <li>
-            <span class="mins">10</span>
-            <span class="mins-l">min walk</span>
-            <em>Kaiser · Alta Bates Summit</em>
-          </li>
-          <li>
-            <span class="mins">3</span>
-            <span class="mins-l">min drive</span>
-            <em>CA-24 · I-580 · I-980</em>
-          </li>
-          <li>
-            <span class="mins">15</span>
-            <span class="mins-l">min walk</span>
-            <em>Temescal · Piedmont Ave</em>
-          </li>
-          <li>
-            <span class="mins">15</span>
-            <span class="mins-l">min BART</span>
-            <em>UC Berkeley · or a short drive</em>
-          </li>
-        </ol>
-      </figure>
-    </aside>
     </div>
 
     <a class="scroll-hook" href="#map">
@@ -107,6 +56,44 @@
     <div class="loc-shell">
 
       <!-- 1) NAP walkability first -->
+      <table class="door-table">
+        <caption>From the front door</caption>
+        <thead>
+          <tr>
+            <th scope="col">Place</th>
+            <th scope="col">From here</th>
+            <th scope="col">Map</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">MacArthur BART</th>
+            <td>10 min walk</td>
+            <td><a href="https://www.google.com/maps/search/?api=1&query=MacArthur+BART+Station+Oakland" target="_blank" rel="noopener noreferrer">Map</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Kaiser · Alta Bates</th>
+            <td>10 min walk</td>
+            <td><a href="https://www.google.com/maps/search/?api=1&query=Kaiser+Permanente+Oakland+MacArthur" target="_blank" rel="noopener noreferrer">Map</a></td>
+          </tr>
+          <tr>
+            <th scope="row">CA-24 · I-580 · I-980</th>
+            <td>2–3 min drive</td>
+            <td><a href="https://www.google.com/maps/dir/?api=1&destination=3875+Ruby+St+Oakland+CA+94609" target="_blank" rel="noopener noreferrer">Map</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Temescal · Piedmont Ave</th>
+            <td>10–15 min walk</td>
+            <td><a href="https://www.google.com/maps/search/?api=1&query=Temescal+Piedmont+Ave+Oakland" target="_blank" rel="noopener noreferrer">Map</a></td>
+          </tr>
+          <tr>
+            <th scope="row">UC Berkeley</th>
+            <td>15 min by BART</td>
+            <td><a href="https://www.google.com/maps/search/?api=1&query=UC+Berkeley" target="_blank" rel="noopener noreferrer">Map</a></td>
+          </tr>
+        </tbody>
+      </table>
+
       <header class="scores-block">
         <p class="eyebrow">94609 · walkability</p>
         <h2>How walkable is it?</h2>
@@ -218,12 +205,37 @@
       </div>
 
       <div class="map-foot">
-        <a href="tel:6289993912">628-999-3912</a>
-        <a href="mailto:fsu9913@gmail.com?subject=Inquiry%20-%203875%20Ruby">hello@rent-ruby.com</a>
+        <a href="tel:6289993912">Call us</a>
+        <a href="mailto:fsu9913@gmail.com?subject=Inquiry%20-%203875%20Ruby">Email us</a>
+        <button class="text-btn" type="button" id="open-intake-foot">Contact us</button>
         <span>3875 Ruby St · Oakland, CA 94609 · 24 units · 1924</span>
       </div>
     </div>
   </section>
+  <dialog class="intake" id="intake" aria-labelledby="intake-title">
+    <form id="intake-form" method="dialog">
+      <p class="eyebrow">3875 Ruby St</p>
+      <h2 id="intake-title">Contact us</h2>
+      <p class="intake-note">This opens an email to hello@rent-ruby.com with what you write here.</p>
+      <label for="intake-name">Name</label>
+      <input id="intake-name" name="name" type="text" autocomplete="name" required />
+      <label for="intake-phone">Phone</label>
+      <input id="intake-phone" name="phone" type="tel" autocomplete="tel" />
+      <label for="intake-email">Email</label>
+      <input id="intake-email" name="email" type="email" autocomplete="email" required />
+      <label for="intake-who">I am</label>
+      <select id="intake-who" name="who">
+        <option>Looking to rent</option>
+        <option>A resident</option>
+      </select>
+      <label for="intake-message">Message</label>
+      <textarea id="intake-message" name="message" rows="4" required></textarea>
+      <div class="intake-actions">
+        <button class="intake-send" type="submit">Send</button>
+        <button class="intake-cancel" type="button" id="intake-close">Close</button>
+      </div>
+    </form>
+  </dialog>
   <button class="desk-launch" id="desk-open" type="button">Desk</button>
   <section class="desk" id="desk" hidden aria-labelledby="desk-title">
     <header class="desk-head">
@@ -244,24 +256,33 @@
   <script src="desk.js"></script>
   <script>
     (function () {
-      var bar = document.getElementById("rr-ticker");
-      fetch("/notices.json", { cache: "no-store" })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          var items = (data.notices || []).filter(function (n) { return n && n.text; });
-          if (!items.length) { bar.remove(); return; }
-          var track = document.createElement("div");
-          track.className = "rr-ticker-track";
-          var bits = items.concat(items);
-          bits.forEach(function (n) {
-            var s = document.createElement("span");
-            s.textContent = n.text;
-            track.appendChild(s);
-          });
-          bar.appendChild(track);
-          bar.hidden = false;
-        })
-        .catch(function () { bar.remove(); });
+      var dialog = document.getElementById("intake");
+      var form = document.getElementById("intake-form");
+      function openIntake() {
+        if (typeof dialog.showModal === "function") dialog.showModal();
+      }
+      document.getElementById("open-intake").addEventListener("click", openIntake);
+      document.getElementById("open-intake-foot").addEventListener("click", openIntake);
+      document.getElementById("intake-close").addEventListener("click", function () {
+        dialog.close();
+      });
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var data = new FormData(form);
+        var body = [
+          "Name: " + data.get("name"),
+          "Phone: " + (data.get("phone") || ""),
+          "Email: " + data.get("email"),
+          "I am: " + data.get("who"),
+          "",
+          data.get("message")
+        ].join("\n");
+        var href = "mailto:fsu9913@gmail.com?subject=" +
+          encodeURIComponent("Contact us — 3875 Ruby St") +
+          "&body=" + encodeURIComponent(body);
+        window.location.href = href;
+        dialog.close();
+      });
     })();
   </script>
   <!-- Cloudflare Web Analytics -->

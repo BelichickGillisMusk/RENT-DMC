@@ -1,16 +1,16 @@
 :root {
-  --ink: #0b1a2d;
-  --ruby: #c81e3a;
-  --hot: #ff5a3c;
-  --cream: #faf6f1;
-  --cream-2: #f0e8df;
+  --ink: #1a1a1a;
+  --ruby: #782f40;
+  --hot: #ceb888;
+  --cream: #f7f4ef;
+  --cream-2: #efe8dc;
   --card: #ffffff;
-  --muted: #5c6570;
-  --line: rgba(11, 26, 45, 0.08);
-  --wine: #5c1a2e;
-  --serif: "Instrument Serif", Georgia, serif;
-  --sans: "IBM Plex Sans", system-ui, sans-serif;
-  --cond: "Barlow Condensed", system-ui, sans-serif;
+  --muted: #5c534c;
+  --line: rgba(120, 47, 64, 0.14);
+  --wine: #541e2b;
+  --serif: "acumin-pro", "Open Sans", Georgia, serif;
+  --sans: "acumin-pro", "Open Sans", system-ui, sans-serif;
+  --cond: "acumin-pro-condensed", "acumin-pro", "Open Sans", system-ui, sans-serif;
   --photo: url("assets/hero-1600.jpg");
 }
 
@@ -205,8 +205,8 @@ a {
 
 .hero-stage {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.9fr);
-  gap: 1.25rem 1.5rem;
+  grid-template-columns: minmax(0, 36rem);
+  justify-content: start;
   align-items: end;
   max-width: 1120px;
   width: 100%;
@@ -385,6 +385,7 @@ a {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--hot);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
 }
 
 .hero-copy h1 {
@@ -422,20 +423,27 @@ a {
 }
 
 .contact {
-  display: grid;
-  gap: 0.1rem;
-  min-width: min(100%, 220px);
-  padding: 0.75rem 1rem;
-  border-radius: 1rem;
-  background: rgba(11, 26, 45, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(12px);
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 1.05rem;
+  border-radius: 999px;
+  background: var(--ruby);
+  color: var(--hot);
+  border: 2px solid var(--hot);
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .contact:hover {
   transform: translateY(-1px);
-  border-color: var(--hot);
+  background: var(--wine);
 }
 
 .contact .label {
@@ -505,6 +513,151 @@ a {
 .loc-shell {
   max-width: 1120px;
   margin: 0 auto;
+}
+
+.door-table {
+  width: min(100%, 36rem);
+  margin: 0 0 1.75rem;
+  border-collapse: collapse;
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  overflow: hidden;
+  font-size: 0.92rem;
+}
+
+.door-table caption {
+  caption-side: top;
+  text-align: left;
+  padding: 0 0 0.45rem;
+  font-family: var(--cond);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ruby);
+}
+
+.door-table th,
+.door-table td {
+  padding: 0.45rem 0.7rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.door-table thead th {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--cream-2);
+}
+
+.door-table tbody th {
+  font-weight: 700;
+}
+
+.door-table a {
+  color: var(--ruby);
+  font-weight: 700;
+  border-bottom: 2px solid var(--hot);
+}
+
+.intake {
+  width: min(28rem, calc(100vw - 1.5rem));
+  border: 0;
+  border-radius: 1.2rem;
+  padding: 0;
+  color: var(--ink);
+  background: var(--cream);
+  box-shadow: 0 24px 60px rgba(26, 26, 26, 0.35);
+}
+
+.intake::backdrop {
+  background: rgba(26, 26, 26, 0.55);
+}
+
+.intake form {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.1rem 1.15rem 1rem;
+}
+
+.intake h2 {
+  margin: 0 0 0.2rem;
+  font-family: var(--cond);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 0.95;
+}
+
+.intake-note {
+  margin: 0 0 0.45rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.intake label {
+  margin-top: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ruby);
+}
+
+.intake input,
+.intake select,
+.intake textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+}
+
+.intake-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+.intake-send,
+.intake-cancel,
+.text-btn {
+  font-family: var(--cond);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.intake-send {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  background: var(--ruby);
+  color: var(--hot);
+}
+
+.intake-cancel,
+.text-btn {
+  border: 0;
+  background: transparent;
+  color: var(--ruby);
+  padding: 0.6rem 0.4rem;
+}
+
+.map-foot .text-btn {
+  font-size: 1.15rem;
+  border-bottom: 2px solid rgba(120, 47, 64, 0.3);
+  border-radius: 0;
+  padding: 0;
 }
 
 .eyebrow {
@@ -1467,7 +1620,7 @@ a {
 
 .desk-launch {
   position: fixed;
-  left: 1rem;
+  right: 1rem;
   bottom: 1rem;
   z-index: 20;
   border: 0;
